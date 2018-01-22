@@ -1,7 +1,7 @@
 SparkFun BNO080 IMU Library
 ===========================================================
 
-![SparkFun Inertial Measurement Unit - BNO080](https://cdn.sparkfun.com//assets/parts/1/2/3/3/1/14349-01.jpg)
+![SparkFun Inertial Measurement Unit - BNO080](https://cdn.sparkfun.com//assets/parts/1/2/7/3/3/14586-VR_IMU__Qwiic__-_BNO080-01.jpg)
 
 [*SparkX IMU BNO080 (SPX-14586)*](https://www.sparkfun.com/products/14586)
 
