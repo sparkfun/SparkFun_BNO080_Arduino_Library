@@ -152,6 +152,7 @@ class BNO080 {
 	void enableRotationVector(uint16_t timeBetweenReports);
 	void enableGameRotationVector(uint16_t timeBetweenReports);
 	void enableAccelerometer(uint16_t timeBetweenReports);
+	void enableLinearAccelerometer(uint16_t timeBetweenReports);
 	void enableGyro(uint16_t timeBetweenReports);
 	void enableMagnetometer(uint16_t timeBetweenReports);
 	void enableStepCounter(uint16_t timeBetweenReports);
@@ -172,6 +173,11 @@ class BNO080 {
 	float getAccelY();
 	float getAccelZ();
 	uint8_t getAccelAccuracy();
+
+	float getLinAccelX();
+	float getLinAccelY();
+	float getLinAccelZ();
+	uint8_t getLinAccelAccuracy();
 
 	float getGyroX();
 	float getGyroY();
@@ -228,6 +234,7 @@ class BNO080 {
 
 	//These are the raw sensor values pulled from the user requested Input Report
 	uint16_t rawAccelX, rawAccelY, rawAccelZ, accelAccuracy;
+	uint16_t rawLinAccelX, rawLinAccelY, rawLinAccelZ, accelLinAccuracy;
 	uint16_t rawGyroX, rawGyroY, rawGyroZ, gyroAccuracy;
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
@@ -240,6 +247,7 @@ class BNO080 {
 	//See the read metadata example for more info
 	int16_t rotationVector_Q1 = 14;
 	int16_t accelerometer_Q1 = 8;
+	int16_t linear_accelerometer_Q1 = 8;
 	int16_t gyro_Q1 = 9;
 	int16_t magnetometer_Q1 = 4;
 };

@@ -135,6 +135,13 @@ void BNO080::parseInputReport(void)
 		rawAccelY = data2;
 		rawAccelZ = data3;
 	}
+	else if(shtpData[5] == SENSOR_REPORTID_LINEAR_ACCELERATION)
+	{
+		accelLinAccuracy = status;
+		rawLinAccelX = data1;
+		rawLinAccelY = data2;
+		rawLinAccelZ = data3;
+	}
 	else if(shtpData[5] == SENSOR_REPORTID_GYROSCOPE)
 	{
 		gyroAccuracy = status;
@@ -221,7 +228,7 @@ float BNO080::getQuatRadianAccuracy()
 //Return the acceleration component
 uint8_t BNO080::getQuatAccuracy()
 {
-	return(accelAccuracy);
+	return(quatAccuracy);
 }
 
 //Return the acceleration component
@@ -249,6 +256,35 @@ float BNO080::getAccelZ()
 uint8_t BNO080::getAccelAccuracy()
 {
 	return(accelAccuracy);
+}
+
+// linear acceleration, i.e. minus gravity
+
+//Return the acceleration component
+float BNO080::getLinAccelX()
+{
+    float accel = qToFloat(rawLinAccelX, linear_accelerometer_Q1);
+	return(accel);
+}
+
+//Return the acceleration component
+float BNO080::getLinAccelY()
+{
+    float accel = qToFloat(rawLinAccelY, linear_accelerometer_Q1);
+	return(accel);
+}
+
+//Return the acceleration component
+float BNO080::getLinAccelZ()
+{
+    float accel = qToFloat(rawLinAccelZ, linear_accelerometer_Q1);
+	return(accel);
+}
+
+//Return the acceleration component
+uint8_t BNO080::getLinAccelAccuracy()
+{
+	return(accelLinAccuracy);
 }
 
 //Return the gyro component
@@ -534,6 +570,12 @@ void BNO080::enableGameRotationVector(uint16_t timeBetweenReports)
 void BNO080::enableAccelerometer(uint16_t timeBetweenReports)
 {
   setFeatureCommand(SENSOR_REPORTID_ACCELEROMETER, timeBetweenReports);
+}
+
+//Sends the packet to enable the accelerometer
+void BNO080::enableLinearAccelerometer(uint16_t timeBetweenReports)
+{
+  setFeatureCommand(SENSOR_REPORTID_LINEAR_ACCELERATION, timeBetweenReports);
 }
 
 //Sends the packet to enable the gyro
