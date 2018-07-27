@@ -1,9 +1,9 @@
 SparkFun BNO080 IMU Library
 ===========================================================
 
-![SparkFun Inertial Measurement Unit - BNO080](https://cdn.sparkfun.com//assets/parts/1/2/7/3/3/14586-VR_IMU__Qwiic__-_BNO080-01.jpg)
+![SparkFun Inertial Measurement Unit - BNO080](https://cdn.sparkfun.com//assets/parts/1/2/8/9/1/14686-Qwiic_VR_IMU_BN0080-01.jpg)
 
-[*SparkX IMU BNO080 (SPX-14586)*](https://www.sparkfun.com/products/14586)
+[*SparkFun IMU BNO080 (SEN-14686)*](https://www.sparkfun.com/products/14686)
 
 The BNO080/BNO085 IMU has a combination triple axis accelerometer/gyro/magnetometer packaged with an ARM Cortex M0+ running powerful algorithms. This enables the BNO080 Inertial Measurement Unit (IMU) to produce accurate rotation vector headings with an error of 5 degrees or less. It's what we've been waiting for: all the sensor data is combined into meaningful, accurate IMU information.
 
@@ -25,16 +25,18 @@ Documentation
 --------------
 
 * **[Installing an Arduino Library Guide](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)** - Basic information on how to install an Arduino library.
-* **[Product Repository](https://github.com/sparkfunX/Qwiic_IMU_BNO080)** - Main repository (including hardware files)
+* **[Product Repository](https://github.com/sparkfun/Qwiic_IMU_BNO080)** - Main repository (including hardware files)
 
 License Information
 -------------------
 
 This product is _**open source**_! 
 
-Various bits of the code have different licenses applied. Anything SparkFun wrote is beerware; if you see me (or any other SparkFun employee) at the local, and you've found our code helpful, please buy us a round! Anything Maxim wrote has its own license. Anything that was co-writing with Peter Jansen is BSD.
+Please review the LICENSE.md file for license information. 
 
-Please use, reuse, and modify these files as you see fit. Please maintain attribution to SparkFun Electronics and release anything derivative under the same license.
+If you have any questions or concerns on licensing, please contact techsupport@sparkfun.com.
+
+Please use, reuse, and modify these files as you see fit. Please maintain attribution to SparkFun Electronics and release any derivative under the same license.
 
 Distributed as-is; no warranty is given.
 
