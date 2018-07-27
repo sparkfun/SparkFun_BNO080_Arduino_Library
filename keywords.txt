@@ -37,6 +37,7 @@ enableMagnetometer	KEYWORD2
 enableStepCounter	KEYWORD2
 enableStabilityClassifier	KEYWORD2
 enableActivityClassifier	KEYWORD2
+enableLinearAccelerometer	KEYWORD2
 
 dataAvailable	KEYWORD2
 parseInputReport	KEYWORD2
@@ -62,6 +63,11 @@ getMagX	KEYWORD2
 getMagY	KEYWORD2
 getMagZ	KEYWORD2
 getMagAccuracy	KEYWORD2
+
+getLinAccelX	KEYWORD2
+getLinAccelY	KEYWORD2
+getLinAccelZ	KEYWORD2
+getLinAccelAccuracy	KEYWORD2
 
 calibrateAccelerometer	KEYWORD2
 calibrateGyro	KEYWORD2		
