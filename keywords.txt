@@ -41,6 +41,7 @@ enableLinearAccelerometer	KEYWORD2
 
 dataAvailable	KEYWORD2
 parseInputReport	KEYWORD2
+parseCommandReport	KEYWORD2
 
 getQuatI	KEYWORD2
 getQuatJ	KEYWORD2
@@ -76,6 +77,8 @@ calibratePlanarAccelerometer	KEYWORD2
 calibrateAll	KEYWORD2
 endCalibration	KEYWORD2
 saveCalibration	KEYWORD2
+requestCalibrationStatus	KEYWORD2
+calibrationComplete	KEYWORD2
 
 getStepCount	KEYWORD2
 getStabilityClassifier	KEYWORD2
@@ -85,6 +88,7 @@ setFeatureCommand	KEYWORD2
 setFeatureCommand	KEYWORD2
 sendCommand	KEYWORD2
 sendCalibrateCommand	KEYWORD2
+calibrationComplete	KEYWORD2
 
 getQ1	KEYWORD2
 getQ2	KEYWORD2

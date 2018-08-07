@@ -58,8 +58,35 @@ void loop()
     if(incoming == 's')
     {
       myIMU.saveCalibration(); //Saves the current dynamic calibration data (DCD) to memory
-      myIMU.endCalibration(); //Turns off all calibration
-      Serial.println("Calibration ended");
+      myIMU.requestCalibrationStatus(); //Sends command to get the latest calibration status
+
+      //Wait for calibration response, timeout if no response
+      int counter = 100;
+      while(1)
+      {
+        if(--counter == 0) break;
+        if(myIMU.dataAvailable() == true)
+        {
+          //The IMU can report many different things. We must wait
+          //for the ME Calibration Response Status byte to go to zero
+          if(myIMU.calibrationComplete() == true)
+          {
+            Serial.println("Calibration data successfully stored");
+            delay(1000);
+            break;
+          }
+        }
+
+        delay(1);
+      }
+      if(counter == 0)
+      {
+        Serial.println("Calibration data failed to store. Please try again.");
+      }
+      
+      //myIMU.endCalibration(); //Turns off all calibration
+      //In general, calibration should be left on at all times. The BNO080
+      //auto-calibrates and auto-records cal data roughly every 5 minutes
     }
   }
 

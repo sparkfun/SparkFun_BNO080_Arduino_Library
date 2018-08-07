@@ -163,7 +163,8 @@ class BNO080 {
     void enableActivityClassifier(uint16_t timeBetweenReports, uint32_t activitiesToEnable, uint8_t (&activityConfidences)[9]);
 
     bool dataAvailable(void);
-    void parseInputReport(void);
+    void parseInputReport(void); //Parse sensor readings out of report
+    void parseCommandReport(void); //Parse command responses out of report
 
     float getQuatI();
     float getQuatJ();
@@ -199,6 +200,8 @@ class BNO080 {
     void calibrateAll();
     void endCalibration();
     void saveCalibration();
+	void requestCalibrationStatus(); //Sends command to get status
+	boolean calibrationComplete(); //Checks ME Cal response for byte 5, R0 - Status
 
     uint16_t getStepCount();
     uint8_t getStabilityClassifier();
@@ -252,6 +255,7 @@ class BNO080 {
     uint8_t stabilityClassifier;
     uint8_t activityClassifier;
     uint8_t *_activityConfidences; //Array that store the confidences of the 9 possible activities
+	uint8_t calibrationStatus; //Byte R0 of ME Calibration Response
 
     //These Q values are defined in the datasheet but can also be obtained by querying the meta data records
     //See the read metadata example for more info

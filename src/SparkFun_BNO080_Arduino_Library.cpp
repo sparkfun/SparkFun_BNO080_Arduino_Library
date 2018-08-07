@@ -145,8 +145,53 @@ bool BNO080::dataAvailable(void)
       parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
       return (true);
     }
+    else if (shtpHeader[2] == CHANNEL_CONTROL)
+    {
+      parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
+      return (true);
+    }
+	
   }
   return (false);
+}
+
+//This function pulls the data from the command response report
+
+//Unit responds with packet that contains the following:
+//shtpHeader[0:3]: First, a 4 byte header
+//shtpData[0]: The Report ID
+//shtpData[1]: Sequence number (See 6.5.18.2)
+//shtpData[2]: Command
+//shtpData[3]: Command Sequence Number
+//shtpData[4]: Response Sequence Number
+//shtpData[4 + 0]: R0
+//shtpData[4 + 1]: R1
+//shtpData[4 + 2]: R2
+//shtpData[4 + 3]: R3
+//shtpData[4 + 4]: R4
+//shtpData[4 + 5]: R5
+//shtpData[4 + 6]: R6
+//shtpData[4 + 7]: R7
+//shtpData[4 + 8]: R8
+void BNO080::parseCommandReport(void)
+{
+  if (shtpData[0] == SHTP_REPORT_COMMAND_RESPONSE)
+  {
+	  //The BNO080 responds with this report to command requests. It's up to use to remember which command we issued.
+	  uint8_t command = shtpData[2]; //This is the Command byte of the response
+	  
+	  if(command == COMMAND_ME_CALIBRATE)
+	  {
+		calibrationStatus = shtpData[4 + 0]; //R0 - Status (0 = success, non-zero = fail)
+	  }
+  }
+  else
+  {
+    //This sensor report ID is unhandled.
+    //See reference manual to add additional feature reports as needed
+  }
+
+  //TODO additional feature reports may be strung together. Parse them all.
 }
 
 //This function pulls the data from the input report
@@ -242,6 +287,18 @@ void BNO080::parseInputReport(void)
     //Load activity classification confidences into the array
     for (uint8_t x = 0 ; x < 9 ; x++) //Hardcoded to max of 9. TODO - bring in array size
       _activityConfidences[x] = shtpData[5 + 6 + x]; //5 bytes of timestamp, byte 6 is first confidence byte
+  }
+  else if (shtpData[5] == SHTP_REPORT_COMMAND_RESPONSE)
+  {
+	  Serial.println("!");
+	  //The BNO080 responds with this report to command requests. It's up to use to remember which command we issued.
+	  uint8_t command = shtpData[5 + 2]; //This is the Command byte of the response
+	  
+	  if(command == COMMAND_ME_CALIBRATE)
+	  {
+		Serial.println("ME Cal report found!");
+		calibrationStatus = shtpData[5 + 5]; //R0 - Status (0 = success, non-zero = fail)
+	  }
   }
   else
   {
@@ -707,6 +764,14 @@ void BNO080::endCalibration()
   sendCalibrateCommand(CALIBRATE_STOP); //Disables all calibrations
 }
 
+//See page 51 of reference manual - ME Calibration Response
+//Byte 5 is parsed during the readPacket and stored in calibrationStatus
+boolean BNO080::calibrationComplete()
+{
+	if(calibrationStatus == 0) return(true);
+	return(false);
+}
+
 
 //Given a sensor's report ID, this tells the BNO080 to begin reporting the values
 void BNO080::setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports)
@@ -794,6 +859,32 @@ void BNO080::sendCalibrateCommand(uint8_t thingToCalibrate)
     shtpData[5] = 1;
   }
   else if (thingToCalibrate == CALIBRATE_STOP) ; //Do nothing, bytes are set to zero
+  
+  //Make the internal calStatus variable non-zero (operation failed) so that user can test while we wait
+  calibrationStatus = 1; 
+
+  //Using this shtpData packet, send a command
+  sendCommand(COMMAND_ME_CALIBRATE);
+}
+
+//Request ME Calibration Status from BNO080
+//See page 51 of reference manual
+void BNO080::requestCalibrationStatus()
+{
+  /*shtpData[3] = 0; //P0 - Reserved
+    shtpData[4] = 0; //P1 - Reserved
+    shtpData[5] = 0; //P2 - Reserved
+    shtpData[6] = 0; //P3 - 0x01 - Subcommand: Get ME Calibration
+    shtpData[7] = 0; //P4 - Reserved
+    shtpData[8] = 0; //P5 - Reserved
+    shtpData[9] = 0; //P6 - Reserved
+    shtpData[10] = 0; //P7 - Reserved
+    shtpData[11] = 0; //P8 - Reserved*/
+
+  for (uint8_t x = 3 ; x < 12 ; x++) //Clear this section of the shtpData array
+    shtpData[x] = 0;
+	
+  shtpData[6] = 0x01; //P3 - 0x01 - Subcommand: Get ME Calibration
 
   //Using this shtpData packet, send a command
   sendCommand(COMMAND_ME_CALIBRATE);
