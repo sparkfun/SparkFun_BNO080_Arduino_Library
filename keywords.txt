@@ -27,7 +27,7 @@ waitForSPI	KEYWORD2
 receivePacket	KEYWORD2
 getData	KEYWORD2
 sendPacket	KEYWORD2
-printPacket KEYWORD2
+printPacket	KEYWORD2
 
 enableRotationVector	KEYWORD2
 enableGameRotationVector	KEYWORD2
@@ -71,7 +71,7 @@ getLinAccelZ	KEYWORD2
 getLinAccelAccuracy	KEYWORD2
 
 calibrateAccelerometer	KEYWORD2
-calibrateGyro	KEYWORD2		
+calibrateGyro	KEYWORD2
 calibrateMagnetometer	KEYWORD2
 calibratePlanarAccelerometer	KEYWORD2
 calibrateAll	KEYWORD2
