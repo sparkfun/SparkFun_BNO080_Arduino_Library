@@ -203,7 +203,8 @@ class BNO080 {
 	void requestCalibrationStatus(); //Sends command to get status
 	boolean calibrationComplete(); //Checks ME Cal response for byte 5, R0 - Status
 
-    uint16_t getStepCount();
+    uint32_t getTimeStamp();
+	uint16_t getStepCount();
     uint8_t getStabilityClassifier();
     uint8_t getActivityClassifier();
 
@@ -252,7 +253,8 @@ class BNO080 {
     uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
     uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
     uint16_t stepCount;
-    uint8_t stabilityClassifier;
+    uint32_t timeStamp;
+	uint8_t stabilityClassifier;
     uint8_t activityClassifier;
     uint8_t *_activityConfidences; //Array that store the confidences of the 9 possible activities
 	uint8_t calibrationStatus; //Byte R0 of ME Calibration Response

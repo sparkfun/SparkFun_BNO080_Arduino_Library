@@ -218,6 +218,8 @@ void BNO080::parseInputReport(void)
 
   dataLength -= 4; //Remove the header bytes from the data count
 
+  timeStamp = ((uint32_t)shtpData[4] << (8 * 3)) | (shtpData[3] << (8 * 2)) | (shtpData[2] << (8 * 1)) | (shtpData[1] << (8 * 0));
+  
   uint8_t status = shtpData[5 + 2] & 0x03; //Get status bits
   uint16_t data1 = (uint16_t)shtpData[5 + 5] << 8 | shtpData[5 + 4];
   uint16_t data2 = (uint16_t)shtpData[5 + 7] << 8 | shtpData[5 + 6];
@@ -476,6 +478,12 @@ uint8_t BNO080::getStabilityClassifier()
 uint8_t BNO080::getActivityClassifier()
 {
   return (activityClassifier);
+}
+
+//Return the time stamp
+uint32_t BNO080::getTimeStamp()
+{
+  return (timeStamp);
 }
 
 //Given a record ID, read the Q1 value from the metaData record in the FRS (ya, it's complicated)

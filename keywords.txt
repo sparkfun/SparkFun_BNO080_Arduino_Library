@@ -80,6 +80,7 @@ saveCalibration	KEYWORD2
 requestCalibrationStatus	KEYWORD2
 calibrationComplete	KEYWORD2
 
+getTimeStamp	KEYWORD2
 getStepCount	KEYWORD2
 getStabilityClassifier	KEYWORD2
 getActivityClassifier	KEYWORD2
