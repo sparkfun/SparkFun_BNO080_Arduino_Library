@@ -31,9 +31,10 @@ void setup()
   Serial.println("BNO080 Reading Metadata Example");
 
   Wire.begin();
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   myIMU.begin();
+
+  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   //Get Q1 for rotation vector and accelerometer
   int rotationVector_Q1 = myIMU.getQ1(FRS_RECORDID_ROTATION_VECTOR);
@@ -136,4 +137,3 @@ void loop()
     Serial.println();
   }
   }*/
-

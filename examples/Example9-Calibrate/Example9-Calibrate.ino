@@ -31,9 +31,10 @@ void setup()
   Serial.println("BNO080 Read Example");
 
   Wire.begin();
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   myIMU.begin();
+
+  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   //Enable dynamic calibration for accel, gyro, and mag
   myIMU.calibrateAll(); //Turn on cal for Accel, Gyro, and Mag
@@ -138,4 +139,3 @@ void printAccuracyLevel(byte accuracyNumber)
   else if (accuracyNumber == 2) Serial.print(F("Medium"));
   else if (accuracyNumber == 3) Serial.print(F("High"));
 }
-

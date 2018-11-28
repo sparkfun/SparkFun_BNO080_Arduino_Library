@@ -42,9 +42,10 @@ void setup()
   Serial.println("BNO080 Read Example");
 
   Wire.begin();
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   myIMU.begin();
+
+  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   //See page 73 of reference manual. There is a 32 bit word where each
   //bit enables a different possible activity. Currently there are only 8
@@ -99,4 +100,3 @@ void printActivityName(byte activityNumber)
   else if(activityNumber == 7) Serial.print("Running");
   else if(activityNumber == 8) Serial.print("On stairs");
 }
-

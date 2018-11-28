@@ -30,12 +30,13 @@ void setup()
   Serial.println();
   Serial.println("BNO080 Read Example");
 
-  Wire.begin();
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
+  Wire1.begin();
 
   //The first argument is the I2C address of the sensor, either 0x4B (default) or 0x4A
   //The second is the I2C port to use. Wire, Wire1, softWire, etc.
   myIMU.begin(0x4A, Wire1); 
+
+  Wire1.setClock(400000); //Increase I2C data rate to 400kHz
 
   myIMU.enableRotationVector(50); //Send data update every 50ms
 
@@ -68,4 +69,3 @@ void loop()
     Serial.println();
   }
 }
-

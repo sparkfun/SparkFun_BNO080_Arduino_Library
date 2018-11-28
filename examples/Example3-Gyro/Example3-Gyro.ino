@@ -31,9 +31,10 @@ void setup()
   Serial.println("BNO080 Read Example");
 
   Wire.begin();
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   myIMU.begin();
+
+  Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
   myIMU.enableGyro(50); //Send data update every 50ms
 
@@ -60,4 +61,3 @@ void loop()
     Serial.println();
   }
 }
-
