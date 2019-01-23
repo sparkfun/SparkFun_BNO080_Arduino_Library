@@ -102,12 +102,12 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
   //host. It must not send any other data until this step is complete.
   //When BNO080 first boots it broadcasts big startup packet
   //Read it and dump it
-  waitForSPI();
+  waitForSPI(); //Wait for assertion of INT before reading advert message.
   receivePacket();
 
   //The BNO080 will then transmit an unsolicited Initialize Response (see 6.4.5.2)
   //Read it and dump it
-  waitForSPI();
+  waitForSPI(); //Wait for assertion of INT before reading Init response
   receivePacket();
 
   //Check communication with device
