@@ -53,7 +53,13 @@ void setup()
   Serial.println();
   Serial.println("BNO080 SPI Read Example");
 
-  myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin);
+  myIMU.enableDebugging(Serial); //Pipe debug messages to Serial port
+  
+  if(myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin) == false)
+  {
+    Serial.println("BNO080 over SPI not detected. Are you sure you have all 6 connections? Freezing...");
+    while(1);
+  }
 
   //You can also call begin with SPI clock speed and SPI port hardware
   //myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin, 1000000);
@@ -93,4 +99,3 @@ void loop()
     Serial.println();
   }
 }
-
