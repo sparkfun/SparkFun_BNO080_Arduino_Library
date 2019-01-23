@@ -102,10 +102,12 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
   //host. It must not send any other data until this step is complete.
   //When BNO080 first boots it broadcasts big startup packet
   //Read it and dump it
+  waitForSPI();
   receivePacket();
 
   //The BNO080 will then transmit an unsolicited Initialize Response (see 6.4.5.2)
   //Read it and dump it
+  waitForSPI();
   receivePacket();
 
   //Check communication with device
@@ -116,6 +118,7 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
   sendPacket(CHANNEL_CONTROL, 2);
 
   //Now we wait for response
+  waitForSPI();
   if (receivePacket() == true)
   {
     if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
@@ -950,6 +953,7 @@ boolean BNO080::waitForSPI()
   for (uint8_t counter = 0 ; counter < 125 ; counter++) //Don't got more than 255
   {
     if (digitalRead(_int) == LOW) return (true);
+	if (_printDebug == true) _debugPort->println(F("SPI Wait"));
     delay(1);
   }
 
@@ -963,7 +967,9 @@ boolean BNO080::receivePacket(void)
 {
   if (_i2cPort == NULL) //Do SPI
   {
-    if (waitForSPI() == false) return (false); //Something went wrong
+    if (digitalRead(_int) == HIGH) return (false); //Data is not available
+	  
+    //Old way: if (waitForSPI() == false) return (false); //Something went wrong
 
     //Get first four bytes to find out how much data we need to read
 

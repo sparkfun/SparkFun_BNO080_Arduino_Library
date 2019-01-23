@@ -33,7 +33,6 @@
   7 = !RST
   3.3V = 3V3
   GND = GND
-
 */
 
 #include <SPI.h>
@@ -47,9 +46,12 @@ byte imuWAKPin = 9;
 byte imuINTPin = 8;
 byte imuRSTPin = 7;
 
+unsigned long startTime; //Used for calc'ing Hz
+long measurements = 0; //Used for calc'ing Hz
+
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println();
   Serial.println("BNO080 SPI Read Example");
 
@@ -72,10 +74,15 @@ void setup()
 
   Serial.println(F("Rotation vector enabled"));
   Serial.println(F("Output in form i, j, k, real, accuracy"));
+
+  startTime = millis();
 }
 
 void loop()
 {
+  Serial.println("Doing other things");
+  delay(10); //You can do many other things. We spend most of our time printing and delaying.
+  
   //Look for reports from the IMU
   if (myIMU.dataAvailable() == true)
   {
@@ -84,6 +91,7 @@ void loop()
     float quatK = myIMU.getQuatK();
     float quatReal = myIMU.getQuatReal();
     float quatRadianAccuracy = myIMU.getQuatRadianAccuracy();
+    measurements++;
 
     Serial.print(quatI, 2);
     Serial.print(F(","));
@@ -95,7 +103,10 @@ void loop()
     Serial.print(F(","));
     Serial.print(quatRadianAccuracy, 2);
     Serial.print(F(","));
+    Serial.print((float)measurements / ((millis() - startTime) / 1000.0), 2);
+    Serial.print(F("Hz"));
 
     Serial.println();
   }
+  
 }
