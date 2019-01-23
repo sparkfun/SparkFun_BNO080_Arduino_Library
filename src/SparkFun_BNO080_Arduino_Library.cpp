@@ -31,14 +31,15 @@
 
 //Attempt communication with the device
 //Return true if we got a 'Polo' back from Marco
-boolean BNO080::begin(uint8_t deviceAddress, TwoWire &wirePort)
+boolean BNO080::begin(uint8_t deviceAddress, TwoWire &wirePort, uint8_t intPin)
 {
   _deviceAddress = deviceAddress; //If provided, store the I2C address from user
   _i2cPort = &wirePort; //Grab which port the user wants us to use
+  _int = intPin; //Get the pin that the user wants to use for interrupts. By default, it's NULL and we'll not use it in dataAvailable() function.
 
   //We expect caller to begin their I2C port, with the speed of their choice external to the library
   //But if they forget, we start the hardware here.
-  _i2cPort->begin();
+  //_i2cPort->begin();
 
   //Begin by resetting the IMU
   softReset();
@@ -137,6 +138,14 @@ void BNO080::enableDebugging(Stream &debugPort)
 //Returns false if new readings are not available
 bool BNO080::dataAvailable(void)
 {
+  //If we have an interrupt pin connection available, check if data is available.
+  //If int pin is NULL, then we'll rely on receivePacket() to timeout
+  //See issue 13: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/13
+  if(_int != NULL)
+  {
+	if(digitalRead(_int) == HIGH) return(false);
+  }
+	
   if (receivePacket() == true)
   {
     //Check to see if this packet is a sensor reporting its data to us
