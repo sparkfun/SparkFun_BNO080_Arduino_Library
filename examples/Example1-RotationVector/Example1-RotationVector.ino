@@ -33,7 +33,11 @@ void setup()
 
   Wire.begin();
 
-  myIMU.begin();
+  if (myIMU.begin() == false)
+  {
+    Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
+    while (1);
+  }
 
   Wire.setClock(400000); //Increase I2C data rate to 400kHz
 
