@@ -176,15 +176,15 @@ bool BNO080::dataAvailable(void)
 //shtpData[2]: Command
 //shtpData[3]: Command Sequence Number
 //shtpData[4]: Response Sequence Number
-//shtpData[4 + 0]: R0
-//shtpData[4 + 1]: R1
-//shtpData[4 + 2]: R2
-//shtpData[4 + 3]: R3
-//shtpData[4 + 4]: R4
-//shtpData[4 + 5]: R5
-//shtpData[4 + 6]: R6
-//shtpData[4 + 7]: R7
-//shtpData[4 + 8]: R8
+//shtpData[5 + 0]: R0
+//shtpData[5 + 1]: R1
+//shtpData[5 + 2]: R2
+//shtpData[5 + 3]: R3
+//shtpData[5 + 4]: R4
+//shtpData[5 + 5]: R5
+//shtpData[5 + 6]: R6
+//shtpData[5 + 7]: R7
+//shtpData[5 + 8]: R8
 void BNO080::parseCommandReport(void)
 {
   if (shtpData[0] == SHTP_REPORT_COMMAND_RESPONSE)
@@ -194,7 +194,7 @@ void BNO080::parseCommandReport(void)
 	  
 	  if(command == COMMAND_ME_CALIBRATE)
 	  {
-		calibrationStatus = shtpData[4 + 0]; //R0 - Status (0 = success, non-zero = fail)
+		calibrationStatus = shtpData[5 + 0]; //R0 - Status (0 = success, non-zero = fail)
 	  }
   }
   else
