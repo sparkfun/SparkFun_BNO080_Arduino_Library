@@ -95,6 +95,9 @@ const byte CHANNEL_GYRO = 5;
 #define SENSOR_REPORTID_TAP_DETECTOR 0x10
 #define SENSOR_REPORTID_STEP_COUNTER 0x11
 #define SENSOR_REPORTID_STABILITY_CLASSIFIER 0x13
+#define SENSOR_REPORTID_RAW_ACCELEROMETER 0x14
+#define SENSOR_REPORTID_RAW_GYROSCOPE 0x15
+#define SENSOR_REPORTID_RAW_MAGNETOMETER 0x16
 #define SENSOR_REPORTID_PERSONAL_ACTIVITY_CLASSIFIER 0x1E
 
 //Record IDs from figure 29, page 29 reference manual
@@ -128,7 +131,7 @@ const byte CHANNEL_GYRO = 5;
 
 class BNO080
 {
-  public:
+public:
 	boolean begin(uint8_t deviceAddress = BNO080_DEFAULT_ADDRESS, TwoWire &wirePort = Wire, uint8_t intPin = NULL); //By default use the default I2C addres, and use Wire port, and don't declare an INT pin
 	boolean beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_INTPin, uint8_t user_RSTPin, uint32_t spiPortSpeed = 3000000, SPIClass &spiPort = SPI);
 
@@ -155,6 +158,9 @@ class BNO080
 	void enableStepCounter(uint16_t timeBetweenReports);
 	void enableStabilityClassifier(uint16_t timeBetweenReports);
 	void enableActivityClassifier(uint16_t timeBetweenReports, uint32_t activitiesToEnable, uint8_t (&activityConfidences)[9]);
+	void enableRawAccelerometer(uint16_t timeBetweenReports);
+	void enableRawGyro(uint16_t timeBetweenReports);
+	void enableRawMagnetometer(uint16_t timeBetweenReports);
 
 	bool dataAvailable(void);
 	void parseInputReport(void);   //Parse sensor readings out of report
@@ -202,6 +208,18 @@ class BNO080
 	uint8_t getStabilityClassifier();
 	uint8_t getActivityClassifier();
 
+	int16_t getRawAccelX();
+	int16_t getRawAccelY();
+	int16_t getRawAccelZ();
+
+	int16_t getRawGyroX();
+	int16_t getRawGyroY();
+	int16_t getRawGyroZ();
+
+	int16_t getRawMagX();
+	int16_t getRawMagY();
+	int16_t getRawMagZ();
+
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports);
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports, uint32_t specificConfig);
 	void sendCommand(uint8_t command);
@@ -224,7 +242,7 @@ class BNO080
 	uint8_t commandSequenceNumber = 0;				//Commands have a seqNum as well. These are inside command packet, the header uses its own seqNum per channel
 	uint32_t metaData[MAX_METADATA_SIZE];			//There is more than 10 words in a metadata record but we'll stop at Q point 3
 
-  private:
+private:
 	//Variables
 	TwoWire *_i2cPort;		//The generic connection to user's chosen I2C hardware
 	uint8_t _deviceAddress; //Keeps track of I2C address. setI2CAddress changes this.
@@ -239,7 +257,7 @@ class BNO080
 	uint8_t _int;
 	uint8_t _rst;
 
-	//These are the raw sensor values pulled from the user requested Input Report
+	//These are the raw sensor values (without Q applied) pulled from the user requested Input Report
 	uint16_t rawAccelX, rawAccelY, rawAccelZ, accelAccuracy;
 	uint16_t rawLinAccelX, rawLinAccelY, rawLinAccelZ, accelLinAccuracy;
 	uint16_t rawGyroX, rawGyroY, rawGyroZ, gyroAccuracy;
@@ -249,8 +267,11 @@ class BNO080
 	uint32_t timeStamp;
 	uint8_t stabilityClassifier;
 	uint8_t activityClassifier;
-	uint8_t *_activityConfidences; //Array that store the confidences of the 9 possible activities
-	uint8_t calibrationStatus;	 //Byte R0 of ME Calibration Response
+	uint8_t *_activityConfidences;						  //Array that store the confidences of the 9 possible activities
+	uint8_t calibrationStatus;							  //Byte R0 of ME Calibration Response
+	uint16_t memsRawAccelX, memsRawAccelY, memsRawAccelZ; //Raw readings from MEMS sensor
+	uint16_t memsRawGyroX, memsRawGyroY, memsRawGyroZ;	//Raw readings from MEMS sensor
+	uint16_t memsRawMagX, memsRawMagY, memsRawMagZ;		  //Raw readings from MEMS sensor
 
 	//These Q values are defined in the datasheet but can also be obtained by querying the meta data records
 	//See the read metadata example for more info
