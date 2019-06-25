@@ -237,7 +237,7 @@ void BNO080::parseInputReport(void)
 	uint16_t data2 = (uint16_t)shtpData[5 + 7] << 8 | shtpData[5 + 6];
 	uint16_t data3 = (uint16_t)shtpData[5 + 9] << 8 | shtpData[5 + 8];
 	uint16_t data4 = 0;
-	uint16_t data5 = 0;
+	uint16_t data5 = 0; //We would need to change this to uin32_t to capture time stamp value on Raw Accel/Gyro/Mag reports
 
 	if (dataLength - 5 > 9)
 	{
@@ -301,6 +301,24 @@ void BNO080::parseInputReport(void)
 		//Load activity classification confidences into the array
 		for (uint8_t x = 0; x < 9; x++)					   //Hardcoded to max of 9. TODO - bring in array size
 			_activityConfidences[x] = shtpData[5 + 6 + x]; //5 bytes of timestamp, byte 6 is first confidence byte
+	}
+	else if (shtpData[5] == SENSOR_REPORTID_RAW_ACCELEROMETER)
+	{
+		memsRawAccelX = data1;
+		memsRawAccelY = data2;
+		memsRawAccelZ = data3;
+	}
+	else if (shtpData[5] == SENSOR_REPORTID_RAW_GYROSCOPE)
+	{
+		memsRawGyroX = data1;
+		memsRawGyroY = data2;
+		memsRawGyroZ = data3;
+	}
+	else if (shtpData[5] == SENSOR_REPORTID_RAW_MAGNETOMETER)
+	{
+		memsRawMagX = data1;
+		memsRawMagY = data2;
+		memsRawMagZ = data3;
 	}
 	else if (shtpData[5] == SHTP_REPORT_COMMAND_RESPONSE)
 	{
@@ -496,6 +514,50 @@ uint8_t BNO080::getActivityClassifier()
 uint32_t BNO080::getTimeStamp()
 {
 	return (timeStamp);
+}
+
+//Return raw mems value for the accel
+int16_t BNO080::getRawAccelX()
+{
+	return (memsRawAccelX);
+}
+//Return raw mems value for the accel
+int16_t BNO080::getRawAccelY()
+{
+	return (memsRawAccelY);
+}
+//Return raw mems value for the accel
+int16_t BNO080::getRawAccelZ()
+{
+	return (memsRawAccelZ);
+}
+
+//Return raw mems value for the gyro
+int16_t BNO080::getRawGyroX()
+{
+	return (memsRawGyroX);
+}
+int16_t BNO080::getRawGyroY()
+{
+	return (memsRawGyroY);
+}
+int16_t BNO080::getRawGyroZ()
+{
+	return (memsRawGyroZ);
+}
+
+//Return raw mems value for the mag
+int16_t BNO080::getRawMagX()
+{
+	return (memsRawMagX);
+}
+int16_t BNO080::getRawMagY()
+{
+	return (memsRawMagY);
+}
+int16_t BNO080::getRawMagZ()
+{
+	return (memsRawMagZ);
 }
 
 //Given a record ID, read the Q1 value from the metaData record in the FRS (ya, it's complicated)
@@ -741,6 +803,27 @@ void BNO080::enableStepCounter(uint16_t timeBetweenReports)
 void BNO080::enableStabilityClassifier(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_STABILITY_CLASSIFIER, timeBetweenReports);
+}
+
+//Sends the packet to enable the raw accel readings
+//Note you must enable basic reporting on the sensor as well
+void BNO080::enableRawAccelerometer(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_RAW_ACCELEROMETER, timeBetweenReports);
+}
+
+//Sends the packet to enable the raw accel readings
+//Note you must enable basic reporting on the sensor as well
+void BNO080::enableRawGyro(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_RAW_GYROSCOPE, timeBetweenReports);
+}
+
+//Sends the packet to enable the raw accel readings
+//Note you must enable basic reporting on the sensor as well
+void BNO080::enableRawMagnetometer(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_RAW_MAGNETOMETER, timeBetweenReports);
 }
 
 //Sends the packet to enable the various activity classifiers

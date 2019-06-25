@@ -38,6 +38,9 @@ enableStepCounter	KEYWORD2
 enableStabilityClassifier	KEYWORD2
 enableActivityClassifier	KEYWORD2
 enableLinearAccelerometer	KEYWORD2
+enableRawAccelerometer	KEYWORD2
+enableRawGyro	KEYWORD2
+enableRawMagnetometer	KEYWORD2
 
 dataAvailable	KEYWORD2
 parseInputReport	KEYWORD2
@@ -99,6 +102,19 @@ getRange	KEYWORD2
 readFRSword	KEYWORD2
 frsReadRequest	KEYWORD2
 readFRSdata	KEYWORD2
+
+getRawAccelX	KEYWORD2
+getRawAccelY	KEYWORD2
+getRawAccelZ	KEYWORD2
+
+getRawGyroX	KEYWORD2
+getRawGyroY	KEYWORD2
+getRawGyroZ	KEYWORD2
+
+getRawMagX	KEYWORD2
+getRawMagY	KEYWORD2
+getRawMagZ	KEYWORD2
+
 
 #######################################
 # Constants (LITERAL1)
