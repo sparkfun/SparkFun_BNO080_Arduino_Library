@@ -290,6 +290,10 @@ void BNO080::parseInputReport(void)
 	{
 		stepCount = data3; //Bytes 8/9
 	}
+	else if (shtpData[5] == SENSOR_REPORTID_TAP_DETECTOR)
+	{
+		tapDetector = shtpData[5 + 4]; //Byte 4 only
+	}
 	else if (shtpData[5] == SENSOR_REPORTID_STABILITY_CLASSIFIER)
 	{
 		stabilityClassifier = shtpData[5 + 4]; //Byte 4 only
@@ -496,6 +500,21 @@ uint8_t BNO080::getMagAccuracy()
 uint16_t BNO080::getStepCount()
 {
 	return (stepCount);
+}
+
+//Return the tap detector
+uint8_t BNO080::getTapDetector()
+{
+	// Taps are represented in a bit field (Source: HillcrestLabs SH-2 Reference Manual, 05/19/2017)
+	// Bit 0 –X axis tap
+	// Bit 1 –X axis positive tap
+	// Bit 2 –Y axis tap
+	// Bit 3 –Y axis positive tap
+	// Bit4 –Z axis tap
+	// Bit 5 –Z axis positive tap
+	// Bit 6 –double tap
+	// Bit 7 –reserved
+	return (tapDetector);
 }
 
 //Return the stability classifier
@@ -797,6 +816,12 @@ void BNO080::enableMagnetometer(uint16_t timeBetweenReports)
 void BNO080::enableStepCounter(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_STEP_COUNTER, timeBetweenReports);
+}
+
+//Sends the packet to enable the tap detector
+void BNO080::enableTapDetector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_TAP_DETECTOR, timeBetweenReports);
 }
 
 //Sends the packet to enable the Stability Classifier
