@@ -156,6 +156,7 @@ public:
 	void enableGyro(uint16_t timeBetweenReports);
 	void enableMagnetometer(uint16_t timeBetweenReports);
 	void enableStepCounter(uint16_t timeBetweenReports);
+	void enableTapDetector(uint16_t timeBetweenReports);
 	void enableStabilityClassifier(uint16_t timeBetweenReports);
 	void enableActivityClassifier(uint16_t timeBetweenReports, uint32_t activitiesToEnable, uint8_t (&activityConfidences)[9]);
 	void enableRawAccelerometer(uint16_t timeBetweenReports);
@@ -205,6 +206,7 @@ public:
 
 	uint32_t getTimeStamp();
 	uint16_t getStepCount();
+	uint8_t getTapDetector();
 	uint8_t getStabilityClassifier();
 	uint8_t getActivityClassifier();
 
@@ -264,6 +266,7 @@ private:
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
 	uint16_t stepCount;
+	uint8_t tapDetector;
 	uint32_t timeStamp;
 	uint8_t stabilityClassifier;
 	uint8_t activityClassifier;
