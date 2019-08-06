@@ -207,6 +207,7 @@ public:
 	uint32_t getTimeStamp();
 	uint16_t getStepCount();
 	uint8_t getTapDetector();
+	uint8_t getAndResetTapDetector();
 	uint8_t getStabilityClassifier();
 	uint8_t getActivityClassifier();
 
