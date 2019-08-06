@@ -290,6 +290,10 @@ void BNO080::parseInputReport(void)
 	{
 		stepCount = data3; //Bytes 8/9
 	}
+	else if (shtpData[5] == SENSOR_REPORTID_TAP_DETECTOR)
+	{
+		tapDetector = shtpData[5 + 4]; //Byte 4 only
+	}
 	else if (shtpData[5] == SENSOR_REPORTID_STABILITY_CLASSIFIER)
 	{
 		stabilityClassifier = shtpData[5 + 4]; //Byte 4 only
@@ -496,6 +500,20 @@ uint8_t BNO080::getMagAccuracy()
 uint16_t BNO080::getStepCount()
 {
 	return (stepCount);
+}
+
+//Return the tap detector
+uint8_t BNO080::getTapDetector()
+{
+	return (tapDetector);
+}
+
+//Return the tap detector, reset to 0 (no tap) after reading once
+uint8_t BNO080::getAndResetTapDetector()
+{
+	uint8_t tmp = tapDetector;
+  	tapDetector = 0;
+	return (tmp);
 }
 
 //Return the stability classifier
@@ -797,6 +815,12 @@ void BNO080::enableMagnetometer(uint16_t timeBetweenReports)
 void BNO080::enableStepCounter(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_STEP_COUNTER, timeBetweenReports);
+}
+
+//Sends the packet to enable the Tap detector
+void BNO080::enableTapDetector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_TAP_DETECTOR, timeBetweenReports);
 }
 
 //Sends the packet to enable the Stability Classifier
