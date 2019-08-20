@@ -485,6 +485,18 @@ float BNO080::getYaw()
 	return (yaw);
 }
 
+//Gets the full quaternion
+//i,j,k,real output floats
+void BNO080::getQuat(float &i, float &j, float &k, float &real, float radaccuracy, uint8_t &accuracy)
+{
+	i = qToFloat(rawQuatI, rotationVector_Q1);
+	j = qToFloat(rawQuatJ, rotationVector_Q1);
+	k = qToFloat(rawQuatK, rotationVector_Q1);
+	real = qToFloat(rawQuatReal, rotationVector_Q1);
+	radaccuracy = qToFloat(rawQuatRadianAccuracy, rotationVector_Q1);
+	accuracy = quatAccuracy;
+}
+
 //Return the rotation vector quaternion I
 float BNO080::getQuatI()
 {
@@ -526,6 +538,16 @@ uint8_t BNO080::getQuatAccuracy()
 	return (quatAccuracy);
 }
 
+//Gets the full acceleration
+//x,y,z output floats
+void BNO080::getAccel(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawAccelX, accelerometer_Q1);
+	y = qToFloat(rawAccelY, accelerometer_Q1);
+	z = qToFloat(rawAccelZ, accelerometer_Q1);
+	accuracy = accelAccuracy;
+}
+
 //Return the acceleration component
 float BNO080::getAccelX()
 {
@@ -555,6 +577,16 @@ uint8_t BNO080::getAccelAccuracy()
 
 // linear acceleration, i.e. minus gravity
 
+//Gets the full lin acceleration
+//x,y,z output floats
+void BNO080::getLinAccel(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawLinAccelX, linear_accelerometer_Q1);
+	y = qToFloat(rawLinAccelY, linear_accelerometer_Q1);
+	z = qToFloat(rawLinAccelZ, linear_accelerometer_Q1);
+	accuracy = accelLinAccuracy;
+}
+
 //Return the acceleration component
 float BNO080::getLinAccelX()
 {
@@ -580,6 +612,16 @@ float BNO080::getLinAccelZ()
 uint8_t BNO080::getLinAccelAccuracy()
 {
 	return (accelLinAccuracy);
+}
+
+//Gets the full gyro vector
+//x,y,z output floats
+void BNO080::getGyro(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawGyroX, gyro_Q1);
+	y = qToFloat(rawGyroY, gyro_Q1);
+	z = qToFloat(rawGyroZ, gyro_Q1);
+	accuracy = gyroAccuracy;
 }
 
 //Return the gyro component
@@ -609,6 +651,16 @@ uint8_t BNO080::getGyroAccuracy()
 	return (gyroAccuracy);
 }
 
+//Gets the full mag vector
+//x,y,z output floats
+void BNO080::getMag(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawMagX, magnetometer_Q1);
+	y = qToFloat(rawMagY, magnetometer_Q1);
+	z = qToFloat(rawMagZ, magnetometer_Q1);
+	accuracy = magAccuracy;
+}
+
 //Return the magnetometer component
 float BNO080::getMagX()
 {
@@ -634,6 +686,15 @@ float BNO080::getMagZ()
 uint8_t BNO080::getMagAccuracy()
 {
 	return (magAccuracy);
+}
+
+//Gets the full high rate gyro vector
+//x,y,z output floats
+void BNO080::getFastGyro(float &x, float &y, float &z)
+{
+	x = qToFloat(rawFastGyroX, angular_velocity_Q1);
+	y = qToFloat(rawFastGyroY, angular_velocity_Q1);
+	z = qToFloat(rawFastGyroZ, angular_velocity_Q1);
 }
 
 // Return the high refresh rate gyro component
