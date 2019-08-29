@@ -142,9 +142,9 @@ void BNO080::enableDebugging(Stream &debugPort)
 bool BNO080::dataAvailable(void)
 {
 	//If we have an interrupt pin connection available, check if data is available.
-	//If int pin is NULL, then we'll rely on receivePacket() to timeout
+	//If int pin is not set, then we'll rely on receivePacket() to timeout
 	//See issue 13: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/13
-	if (_int != NULL)
+	if (_int != 255)
 	{
 		if (digitalRead(_int) == HIGH)
 			return (false);
@@ -230,7 +230,7 @@ void BNO080::parseInputReport(void)
 
 	dataLength -= 4; //Remove the header bytes from the data count
 
-	timeStamp = ((uint32_t)shtpData[4] << (8 * 3)) | (shtpData[3] << (8 * 2)) | (shtpData[2] << (8 * 1)) | (shtpData[1] << (8 * 0));
+	timeStamp = ((uint32_t)shtpData[4] << (8 * 3)) | ((uint32_t)shtpData[3] << (8 * 2)) | ((uint32_t)shtpData[2] << (8 * 1)) | ((uint32_t)shtpData[1] << (8 * 0));
 
 	uint8_t status = shtpData[5 + 2] & 0x03; //Get status bits
 	uint16_t data1 = (uint16_t)shtpData[5 + 5] << 8 | shtpData[5 + 4];
@@ -1085,7 +1085,7 @@ boolean BNO080::receivePacket(void)
 		shtpHeader[3] = sequenceNumber;
 
 		//Calculate the number of data bytes in this packet
-		int16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
+		uint16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
 		//This bit indicates if this package is a continuation of the last. Ignore it for now.
 		//TODO catch this as an error and exit
