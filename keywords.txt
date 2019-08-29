@@ -115,6 +115,10 @@ getRawMagX	KEYWORD2
 getRawMagY	KEYWORD2
 getRawMagZ	KEYWORD2
 
+getTapDetector	KEYWORD2
+getAndResetTapDetector	KEYWORD2
+enableTapDetector	KEYWORD2
+
 
 #######################################
 # Constants (LITERAL1)

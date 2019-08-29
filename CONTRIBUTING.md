@@ -8,6 +8,7 @@ If you decide to add a feature to this library, please create a PR and follow th
 
 * Change as little as possible. Do not sumbit a PR that changes 100 lines of whitespace. Break up into multiple PRs if necessary.
 * If you've added a new feature document it with a simple example sketch. This serves both as a test of your PR and as a quick way for users to quickly learn how to use your new feature.
+* If you add new functions also add them to keywords.txt so that they are properly highlighted in Arduino. [Read more](https://www.arduino.cc/en/Hacking/libraryTutorial).
 
 ## Style guide
 
