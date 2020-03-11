@@ -372,7 +372,7 @@ float BNO080::getQuatReal()
 //Return the rotation vector accuracy
 float BNO080::getQuatRadianAccuracy()
 {
-	float quat = qToFloat(rawQuatRadianAccuracy, rotationVector_Q1);
+	float quat = qToFloat(rawQuatRadianAccuracy, rotationVectorAccuracy_Q1);
 	return (quat);
 }
 
