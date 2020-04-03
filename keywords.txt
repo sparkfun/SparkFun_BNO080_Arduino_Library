@@ -41,6 +41,7 @@ enableLinearAccelerometer	KEYWORD2
 enableRawAccelerometer	KEYWORD2
 enableRawGyro	KEYWORD2
 enableRawMagnetometer	KEYWORD2
+enableGyroIntegratedRotationVector	KEYWORD2
 
 dataAvailable	KEYWORD2
 parseInputReport	KEYWORD2
@@ -62,6 +63,11 @@ getGyroX	KEYWORD2
 getGyroY	KEYWORD2
 getGyroZ	KEYWORD2
 getGyroAccuracy	KEYWORD2
+
+getFastGyroX	KEYWORD2
+getFastGyroY	KEYWORD2
+getFastGyroZ	KEYWORD2
+
 
 getMagX	KEYWORD2
 getMagY	KEYWORD2
