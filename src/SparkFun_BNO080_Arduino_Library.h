@@ -271,6 +271,7 @@ private:
 	//These Q values are defined in the datasheet but can also be obtained by querying the meta data records
 	//See the read metadata example for more info
 	int16_t rotationVector_Q1 = 14;
+	int16_t rotationVectorAccuracy_Q1 = 12; //Heading accuracy estimate in radians. The Q point is 12.
 	int16_t accelerometer_Q1 = 8;
 	int16_t linear_accelerometer_Q1 = 8;
 	int16_t gyro_Q1 = 9;
