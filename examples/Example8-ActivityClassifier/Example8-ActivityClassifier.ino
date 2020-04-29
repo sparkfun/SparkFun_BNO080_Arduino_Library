@@ -25,7 +25,7 @@
   Hardware Connections:
   Attach the Qwiic Shield to your Arduino/Photon/ESP32 or other
   Plug the sensor onto the shield
-  Serial.print it out at 9600 baud to serial monitor.
+  Serial.print it out at 115200 baud to serial monitor.
 */
 
 #include <Wire.h>
@@ -37,7 +37,7 @@ byte activityConfidences[9]; //This array will be filled with the confidence lev
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println();
   Serial.println("BNO080 Read Example");
 
@@ -54,7 +54,7 @@ void setup()
 
   //Send data update every 50ms, with sensor specific config word
   //Pass in a pointer to our activityConfidences array as well
-  myIMU.enableActivityClassifier(50, enableActivities, activityConfidences); 
+  myIMU.enableActivityClassifier(50, enableActivities, activityConfidences);
 
   Serial.println(F("Activity Classifier enabled"));
 }
@@ -66,7 +66,7 @@ void loop()
   {
     //getActivityClassifier will modify our activityConfidences array
     //It will return the most likely activity as well.
-    byte mostLikelyActivity = myIMU.getActivityClassifier(); 
+    byte mostLikelyActivity = myIMU.getActivityClassifier();
 
     Serial.print("Most likely activity: ");
     printActivityName(mostLikelyActivity);
