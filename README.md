@@ -18,14 +18,16 @@ Thank to all those who have helped improve the library:
 * blendmaster for adding [Linear Accel report](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/4)
 * per1234 for fixing our [keywords file](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/12)
 * fm4dd for typo - [PR 19](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/19)
+* tstellanova for heading accuracy correction - [PR 40](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/40)
+* badVibes for gyro integrated rotation vector support - [PR 41](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/41)
 
 Repository Contents
 -------------------
 
-* **/examples** - Example sketches for the library (.ino). Run these from the Arduino IDE. 
+* **/examples** - Example sketches for the library (.ino). Run these from the Arduino IDE.
 * **/src** - Source files for the library (.cpp, .h).
-* **keywords.txt** - Keywords from this library that will be highlighted in the Arduino IDE. 
-* **library.properties** - General library properties for the Arduino package manager. 
+* **keywords.txt** - Keywords from this library that will be highlighted in the Arduino IDE.
+* **library.properties** - General library properties for the Arduino package manager.
 
 Documentation
 --------------
@@ -36,9 +38,9 @@ Documentation
 License Information
 -------------------
 
-This product is _**open source**_! 
+This product is _**open source**_!
 
-Please review the LICENSE.md file for license information. 
+Please review the LICENSE.md file for license information.
 
 If you have any questions or concerns on licensing, please contact techsupport@sparkfun.com.
 

@@ -1,5 +1,10 @@
 /*
   Using the BNO080 IMU
+
+  By: Boštjan Čadež (@badVibes--)
+  Date: April 3rd, 2020
+
+  Based on earlier examples
   By: Nathan Seidle
   SparkFun Electronics
   Date: December 21st, 2017
@@ -8,8 +13,7 @@
   Feel like supporting our work? Buy a board from SparkFun!
   https://www.sparkfun.com/products/14586
 
-  This example shows how to output the i/j/k/real parts of the rotation vector.
-  https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+  This example shows how to use the gyro integrated rotation vector
 
   It takes about 1ms at 400kHz I2C to read a record from the sensor, but we are polling the sensor continually
   between updates from the sensor. Use the interrupt pin on the BNO080 breakout to avoid polling.
@@ -17,7 +21,7 @@
   Hardware Connections:
   Attach the Qwiic Shield to your Arduino/Photon/ESP32 or other
   Plug the sensor onto the shield
-  Serial.print it out at 9600 baud to serial monitor.
+  Serial.print it out at 115200 baud to serial monitor.
 */
 
 #include <Wire.h>
@@ -27,7 +31,7 @@ BNO080 myIMU;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println();
   Serial.println("BNO080 Read Example");
 
@@ -39,7 +43,7 @@ void setup()
 //  // Start i2c and BNO080
 //  Wire.flush();   // Reset I2C
 //  IMU.begin(BNO080_DEFAULT_ADDRESS, Wire);
-//  Wire.begin(4, 5); 
+//  Wire.begin(4, 5);
 //  Wire.setClockStretchLimit(4000);
 //  //=================================
 
