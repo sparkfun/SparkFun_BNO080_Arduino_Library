@@ -16,7 +16,7 @@
   Hardware Connections:
   Attach the Qwiic Shield to your Arduino/Photon/ESP32 or other
   Plug the sensor onto the shield
-  Serial.print it out at 9600 baud to serial monitor.
+  Serial.print it out at 115200 baud to serial monitor.
 */
 
 #include <Wire.h>

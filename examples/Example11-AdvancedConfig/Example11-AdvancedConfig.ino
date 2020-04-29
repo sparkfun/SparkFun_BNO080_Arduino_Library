@@ -16,7 +16,7 @@
   Hardware Connections:
   Attach the Qwiic Shield to your Arduino/Photon/ESP32 or other
   Plug the sensor onto the shield
-  Serial.print it out at 9600 baud to serial monitor.
+  Serial.print it out at 115200 baud to serial monitor.
 */
 
 #include <Wire.h>
@@ -26,7 +26,7 @@ BNO080 myIMU;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println();
   Serial.println("BNO080 Read Example");
 
@@ -34,7 +34,7 @@ void setup()
 
   //The first argument is the I2C address of the sensor, either 0x4B (default) or 0x4A
   //The second is the I2C port to use. Wire, Wire1, softWire, etc.
-  myIMU.begin(0x4A, Wire1); 
+  myIMU.begin(0x4A, Wire1);
 
   Wire1.setClock(400000); //Increase I2C data rate to 400kHz
 
