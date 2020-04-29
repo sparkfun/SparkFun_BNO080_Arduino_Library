@@ -221,6 +221,10 @@ public:
 	int16_t getRawMagY();
 	int16_t getRawMagZ();
 
+	float getRoll();
+	float getPitch();
+	float getYaw();
+
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports);
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports, uint32_t specificConfig);
 	void sendCommand(uint8_t command);

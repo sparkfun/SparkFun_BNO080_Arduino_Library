@@ -359,6 +359,82 @@ void BNO080::parseInputReport(void)
 	//TODO additional feature reports may be strung together. Parse them all.
 }
 
+// Quaternion to Euler conversion
+// https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+// https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library/issues/5#issuecomment-306509440
+// Return the roll (rotation around the x-axis) in Radians
+float BNO080::getRoll()
+{
+	float dqw = getQuatReal();
+	float dqx = getQuatI();
+	float dqy = getQuatJ();
+	float dqz = getQuatK();
+
+	float norm = sqrt(dqw*dqw + dqx*dqx + dqy*dqy + dqz*dqz);
+	dqw = dqw/norm;
+	dqx = dqx/norm;
+	dqy = dqy/norm;
+	dqz = dqz/norm;
+
+	float ysqr = dqy * dqy;
+
+	// roll (x-axis rotation)
+	float t0 = +2.0 * (dqw * dqx + dqy * dqz);
+	float t1 = +1.0 - 2.0 * (dqx * dqx + ysqr);
+	float roll = atan2(t0, t1);
+
+	return (roll);
+}
+
+// Return the pitch (rotation around the y-axis) in Radians
+float BNO080::getPitch()
+{
+	float dqw = getQuatReal();
+	float dqx = getQuatI();
+	float dqy = getQuatJ();
+	float dqz = getQuatK();
+
+	float norm = sqrt(dqw*dqw + dqx*dqx + dqy*dqy + dqz*dqz);
+	dqw = dqw/norm;
+	dqx = dqx/norm;
+	dqy = dqy/norm;
+	dqz = dqz/norm;
+
+	float ysqr = dqy * dqy;
+
+	// pitch (y-axis rotation)
+	float t2 = +2.0 * (dqw * dqy - dqz * dqx);
+	t2 = t2 > 1.0 ? 1.0 : t2;
+	t2 = t2 < -1.0 ? -1.0 : t2;
+	float pitch = asin(t2);
+
+	return (pitch);
+}
+
+// Return the yaw / heading (rotation around the z-axis) in Radians
+float BNO080::getYaw()
+{
+	float dqw = getQuatReal();
+	float dqx = getQuatI();
+	float dqy = getQuatJ();
+	float dqz = getQuatK();
+
+	float norm = sqrt(dqw*dqw + dqx*dqx + dqy*dqy + dqz*dqz);
+	dqw = dqw/norm;
+	dqx = dqx/norm;
+	dqy = dqy/norm;
+	dqz = dqz/norm;
+
+	float ysqr = dqy * dqy;
+
+	// yaw (z-axis rotation)
+	float t3 = +2.0 * (dqw * dqz + dqx * dqy);
+	float t4 = +1.0 - 2.0 * (ysqr + dqz * dqz);
+	float yaw = atan2(t3, t4);
+
+	return (yaw);
+}
+
 //Return the rotation vector quaternion I
 float BNO080::getQuatI()
 {
