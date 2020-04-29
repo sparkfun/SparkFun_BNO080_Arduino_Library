@@ -149,7 +149,7 @@ bool BNO080::dataAvailable(void)
 		if (digitalRead(_int) == HIGH)
 			return (false);
 	}
-
+   
 	if (receivePacket() == true)
 	{
 		//Check to see if this packet is a sensor reporting its data to us
@@ -163,6 +163,11 @@ bool BNO080::dataAvailable(void)
 			parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
 			return (true);
 		}
+        else if(shtpHeader[2] == CHANNEL_GYRO)
+        {
+            parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
+            return (true);
+        }
 	}
 	return (false);
 }
@@ -227,10 +232,23 @@ void BNO080::parseInputReport(void)
 	int16_t dataLength = ((uint16_t)shtpHeader[1] << 8 | shtpHeader[0]);
 	dataLength &= ~(1 << 15); //Clear the MSbit. This bit indicates if this package is a continuation of the last.
 	//Ignore it for now. TODO catch this as an error and exit
-
+     
 	dataLength -= 4; //Remove the header bytes from the data count
 
 	timeStamp = ((uint32_t)shtpData[4] << (8 * 3)) | ((uint32_t)shtpData[3] << (8 * 2)) | ((uint32_t)shtpData[2] << (8 * 1)) | ((uint32_t)shtpData[1] << (8 * 0));
+
+	// The gyro-integrated input reports are sent via the special gyro channel and do no include the usual ID, sequence, and status fields 
+	if(shtpHeader[2] == CHANNEL_GYRO) {
+		rawQuatI = (uint16_t)shtpData[1] << 8 | shtpData[0];
+		rawQuatJ = (uint16_t)shtpData[3] << 8 | shtpData[2];
+		rawQuatK = (uint16_t)shtpData[5] << 8 | shtpData[4];
+		rawQuatReal = (uint16_t)shtpData[7] << 8 | shtpData[6];
+		rawFastGyroX = (uint16_t)shtpData[9] << 8 | shtpData[8];
+		rawFastGyroY = (uint16_t)shtpData[11] << 8 | shtpData[10];
+		rawFastGyroZ = (uint16_t)shtpData[13] << 8 | shtpData[12];
+        
+		return;
+	}
 
 	uint8_t status = shtpData[5 + 2] & 0x03; //Get status bits
 	uint16_t data1 = (uint16_t)shtpData[5 + 5] << 8 | shtpData[5 + 4];
@@ -490,6 +508,27 @@ float BNO080::getMagZ()
 uint8_t BNO080::getMagAccuracy()
 {
 	return (magAccuracy);
+}
+
+// Return the high refresh rate gyro component
+float BNO080::getFastGyroX()
+{
+	float gyro = qToFloat(rawFastGyroX, angular_velocity_Q1);
+	return (gyro);
+}
+
+// Return the high refresh rate gyro component
+float BNO080::getFastGyroY()
+{
+	float gyro = qToFloat(rawFastGyroY, angular_velocity_Q1);
+	return (gyro);
+}
+
+// Return the high refresh rate gyro component
+float BNO080::getFastGyroZ()
+{
+	float gyro = qToFloat(rawFastGyroZ, angular_velocity_Q1);
+	return (gyro);
 }
 
 //Return the step count
@@ -793,6 +832,12 @@ void BNO080::enableMagnetometer(uint16_t timeBetweenReports)
 	setFeatureCommand(SENSOR_REPORTID_MAGNETIC_FIELD, timeBetweenReports);
 }
 
+//Sends the packet to enable the high refresh-rate gyro-integrated rotation vector
+void BNO080::enableGyroIntegratedRotationVector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR, timeBetweenReports);
+}
+
 //Sends the packet to enable the step counter
 void BNO080::enableStepCounter(uint16_t timeBetweenReports)
 {
@@ -1077,13 +1122,13 @@ boolean BNO080::receivePacket(void)
 		uint8_t packetMSB = _spiPort->transfer(0);
 		uint8_t channelNumber = _spiPort->transfer(0);
 		uint8_t sequenceNumber = _spiPort->transfer(0); //Not sure if we need to store this or not
-
+        
 		//Store the header info
 		shtpHeader[0] = packetLSB;
 		shtpHeader[1] = packetMSB;
 		shtpHeader[2] = channelNumber;
 		shtpHeader[3] = sequenceNumber;
-
+        
 		//Calculate the number of data bytes in this packet
 		uint16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
@@ -1105,7 +1150,9 @@ boolean BNO080::receivePacket(void)
 		}
 
 		digitalWrite(_cs, HIGH); //Release BNO080
+        
 		_spiPort->endTransaction();
+        //printPacket();
 	}
 	else //Do I2C
 	{
