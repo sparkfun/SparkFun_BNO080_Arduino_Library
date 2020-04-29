@@ -1,5 +1,5 @@
 #######################################
-# Syntax Coloring Map 
+# Syntax Coloring Map
 #######################################
 
 #######################################
@@ -114,6 +114,10 @@ getRawGyroZ	KEYWORD2
 getRawMagX	KEYWORD2
 getRawMagY	KEYWORD2
 getRawMagZ	KEYWORD2
+
+getRoll	KEYWORD2
+getPitch	KEYWORD2
+getYaw	KEYWORD2
 
 
 #######################################
