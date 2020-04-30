@@ -95,6 +95,8 @@ const byte CHANNEL_GYRO = 5;
 #define SENSOR_REPORTID_RAW_GYROSCOPE 0x15
 #define SENSOR_REPORTID_RAW_MAGNETOMETER 0x16
 #define SENSOR_REPORTID_PERSONAL_ACTIVITY_CLASSIFIER 0x1E
+#define SENSOR_REPORTID_AR_VR_STABILIZED_ROTATION_VECTOR 0x28
+#define SENSOR_REPORTID_AR_VR_STABILIZED_GAME_ROTATION_VECTOR 0x29
 
 //Record IDs from figure 29, page 29 reference manual
 //These are used to read the metadata for each sensor type
@@ -147,6 +149,8 @@ public:
 
 	void enableRotationVector(uint16_t timeBetweenReports);
 	void enableGameRotationVector(uint16_t timeBetweenReports);
+	void enableARVRStabilizedRotationVector(uint16_t timeBetweenReports);
+	void enableARVRStabilizedGameRotationVector(uint16_t timeBetweenReports);
 	void enableAccelerometer(uint16_t timeBetweenReports);
 	void enableLinearAccelerometer(uint16_t timeBetweenReports);
 	void enableGyro(uint16_t timeBetweenReports);

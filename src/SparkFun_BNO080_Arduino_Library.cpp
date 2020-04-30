@@ -295,14 +295,18 @@ void BNO080::parseInputReport(void)
 		rawMagY = data2;
 		rawMagZ = data3;
 	}
-	else if (shtpData[5] == SENSOR_REPORTID_ROTATION_VECTOR || shtpData[5] == SENSOR_REPORTID_GAME_ROTATION_VECTOR)
+	else if (shtpData[5] == SENSOR_REPORTID_ROTATION_VECTOR || shtpData[5] == SENSOR_REPORTID_GAME_ROTATION_VECTOR ||
+			 shtpData[5] == SENSOR_REPORTID_AR_VR_STABILIZED_ROTATION_VECTOR || shtpData[5] == SENSOR_REPORTID_AR_VR_STABILIZED_GAME_ROTATION_VECTOR)
 	{
 		quatAccuracy = status;
 		rawQuatI = data1;
 		rawQuatJ = data2;
 		rawQuatK = data3;
 		rawQuatReal = data4;
-		rawQuatRadianAccuracy = data5; //Only available on rotation vector, not game rot vector
+
+		//Only available on rotation vector and ar/vr stabilized rotation vector,
+		// not game rot vector and not ar/vr stabilized rotation vector	
+		rawQuatRadianAccuracy = data5;
 	}
 	else if (shtpData[5] == SENSOR_REPORTID_STEP_COUNTER)
 	{
@@ -878,10 +882,22 @@ void BNO080::enableRotationVector(uint16_t timeBetweenReports)
 	setFeatureCommand(SENSOR_REPORTID_ROTATION_VECTOR, timeBetweenReports);
 }
 
+//Sends the packet to enable the ar/vr stabilized rotation vector
+void BNO080::enableARVRStabilizedRotationVector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_AR_VR_STABILIZED_ROTATION_VECTOR, timeBetweenReports);
+}
+
 //Sends the packet to enable the rotation vector
 void BNO080::enableGameRotationVector(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_GAME_ROTATION_VECTOR, timeBetweenReports);
+}
+
+//Sends the packet to enable the ar/vr stabilized rotation vector
+void BNO080::enableARVRStabilizedGameRotationVector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_AR_VR_STABILIZED_GAME_ROTATION_VECTOR, timeBetweenReports);
 }
 
 //Sends the packet to enable the accelerometer
