@@ -20,6 +20,7 @@ Thank to all those who have helped improve the library:
 * fm4dd for typo - [PR 19](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/19)
 * tstellanova for heading accuracy correction - [PR 40](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/40)
 * badVibes for gyro integrated rotation vector support - [PR 41](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/41)
+* Filimindji for AR/VR Stabilized RotationVector and AR/VR Stabilized GameRotationVector support - [PR 46](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/46)
 
 Repository Contents
 -------------------
