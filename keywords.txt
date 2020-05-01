@@ -31,6 +31,8 @@ printPacket	KEYWORD2
 
 enableRotationVector	KEYWORD2
 enableGameRotationVector	KEYWORD2
+enableARVRStabilizedRotationVector	KEYWORD2
+enableARVRStabilizedGameRotationVector	KEYWORD2
 enableAccelerometer	KEYWORD2
 enableGyro	KEYWORD2
 enableMagnetometer	KEYWORD2
