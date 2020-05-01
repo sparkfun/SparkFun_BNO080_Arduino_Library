@@ -149,7 +149,7 @@ bool BNO080::dataAvailable(void)
 		if (digitalRead(_int) == HIGH)
 			return (false);
 	}
-   
+
 	if (receivePacket() == true)
 	{
 		//Check to see if this packet is a sensor reporting its data to us
@@ -163,11 +163,11 @@ bool BNO080::dataAvailable(void)
 			parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
 			return (true);
 		}
-        else if(shtpHeader[2] == CHANNEL_GYRO)
-        {
-            parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
-            return (true);
-        }
+    else if(shtpHeader[2] == CHANNEL_GYRO)
+    {
+      parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
+      return (true);
+    }
 	}
 	return (false);
 }
@@ -232,12 +232,12 @@ void BNO080::parseInputReport(void)
 	int16_t dataLength = ((uint16_t)shtpHeader[1] << 8 | shtpHeader[0]);
 	dataLength &= ~(1 << 15); //Clear the MSbit. This bit indicates if this package is a continuation of the last.
 	//Ignore it for now. TODO catch this as an error and exit
-     
+
 	dataLength -= 4; //Remove the header bytes from the data count
 
 	timeStamp = ((uint32_t)shtpData[4] << (8 * 3)) | ((uint32_t)shtpData[3] << (8 * 2)) | ((uint32_t)shtpData[2] << (8 * 1)) | ((uint32_t)shtpData[1] << (8 * 0));
 
-	// The gyro-integrated input reports are sent via the special gyro channel and do no include the usual ID, sequence, and status fields 
+	// The gyro-integrated input reports are sent via the special gyro channel and do no include the usual ID, sequence, and status fields
 	if(shtpHeader[2] == CHANNEL_GYRO) {
 		rawQuatI = (uint16_t)shtpData[1] << 8 | shtpData[0];
 		rawQuatJ = (uint16_t)shtpData[3] << 8 | shtpData[2];
@@ -246,7 +246,7 @@ void BNO080::parseInputReport(void)
 		rawFastGyroX = (uint16_t)shtpData[9] << 8 | shtpData[8];
 		rawFastGyroY = (uint16_t)shtpData[11] << 8 | shtpData[10];
 		rawFastGyroZ = (uint16_t)shtpData[13] << 8 | shtpData[12];
-        
+
 		return;
 	}
 
@@ -295,8 +295,10 @@ void BNO080::parseInputReport(void)
 		rawMagY = data2;
 		rawMagZ = data3;
 	}
-	else if (shtpData[5] == SENSOR_REPORTID_ROTATION_VECTOR || shtpData[5] == SENSOR_REPORTID_GAME_ROTATION_VECTOR ||
-			 shtpData[5] == SENSOR_REPORTID_AR_VR_STABILIZED_ROTATION_VECTOR || shtpData[5] == SENSOR_REPORTID_AR_VR_STABILIZED_GAME_ROTATION_VECTOR)
+	else if (shtpData[5] == SENSOR_REPORTID_ROTATION_VECTOR ||
+		shtpData[5] == SENSOR_REPORTID_GAME_ROTATION_VECTOR ||
+		shtpData[5] == SENSOR_REPORTID_AR_VR_STABILIZED_ROTATION_VECTOR ||
+		shtpData[5] == SENSOR_REPORTID_AR_VR_STABILIZED_GAME_ROTATION_VECTOR)
 	{
 		quatAccuracy = status;
 		rawQuatI = data1;
@@ -305,7 +307,7 @@ void BNO080::parseInputReport(void)
 		rawQuatReal = data4;
 
 		//Only available on rotation vector and ar/vr stabilized rotation vector,
-		// not game rot vector and not ar/vr stabilized rotation vector	
+		// not game rot vector and not ar/vr stabilized rotation vector
 		rawQuatRadianAccuracy = data5;
 	}
 	else if (shtpData[5] == SENSOR_REPORTID_STEP_COUNTER)
@@ -1214,13 +1216,13 @@ boolean BNO080::receivePacket(void)
 		uint8_t packetMSB = _spiPort->transfer(0);
 		uint8_t channelNumber = _spiPort->transfer(0);
 		uint8_t sequenceNumber = _spiPort->transfer(0); //Not sure if we need to store this or not
-        
+
 		//Store the header info
 		shtpHeader[0] = packetLSB;
 		shtpHeader[1] = packetMSB;
 		shtpHeader[2] = channelNumber;
 		shtpHeader[3] = sequenceNumber;
-        
+
 		//Calculate the number of data bytes in this packet
 		uint16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
@@ -1242,7 +1244,7 @@ boolean BNO080::receivePacket(void)
 		}
 
 		digitalWrite(_cs, HIGH); //Release BNO080
-        
+
 		_spiPort->endTransaction();
         //printPacket();
 	}
