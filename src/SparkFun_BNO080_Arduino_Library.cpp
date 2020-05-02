@@ -1246,7 +1246,7 @@ boolean BNO080::receivePacket(void)
 		digitalWrite(_cs, HIGH); //Release BNO080
 
 		_spiPort->endTransaction();
-        //printPacket();
+    printPacket();
 	}
 	else //Do I2C
 	{
