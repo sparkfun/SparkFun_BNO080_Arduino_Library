@@ -146,6 +146,7 @@ public:
 	boolean getData(uint16_t bytesRemaining); //Given a number of bytes, send the requests in I2C_BUFFER_LENGTH chunks
 	boolean sendPacket(uint8_t channelNumber, uint8_t dataLength);
 	void printPacket(void); //Prints the current shtp header and data packets
+	void printHeader(void); //Prints the current shtp header (only)
 
 	void enableRotationVector(uint16_t timeBetweenReports);
 	void enableGameRotationVector(uint16_t timeBetweenReports);

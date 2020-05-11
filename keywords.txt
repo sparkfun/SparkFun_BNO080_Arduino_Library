@@ -28,6 +28,7 @@ receivePacket	KEYWORD2
 getData	KEYWORD2
 sendPacket	KEYWORD2
 printPacket	KEYWORD2
+printHeader	KEYWORD2
 
 enableRotationVector	KEYWORD2
 enableGameRotationVector	KEYWORD2

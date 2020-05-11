@@ -56,6 +56,22 @@ boolean BNO080::begin(uint8_t deviceAddress, TwoWire &wirePort, uint8_t intPin)
 	{
 		if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
 		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("SW Version Major: 0x"));
+				_debugPort->print(shtpData[2], HEX);
+				_debugPort->print(F(" SW Version Minor: 0x"));
+				_debugPort->print(shtpData[3], HEX);
+				uint32_t SW_Part_Number = ((uint32_t)shtpData[7] << 24) | ((uint32_t)shtpData[6] << 16) | ((uint32_t)shtpData[5] << 8) | ((uint32_t)shtpData[4]);
+				_debugPort->print(F(" SW Part Number: 0x"));
+				_debugPort->print(SW_Part_Number, HEX);
+				uint32_t SW_Build_Number = ((uint32_t)shtpData[11] << 24) | ((uint32_t)shtpData[10] << 16) | ((uint32_t)shtpData[9] << 8) | ((uint32_t)shtpData[8]);
+				_debugPort->print(F(" SW Build Number: 0x"));
+				_debugPort->print(SW_Build_Number, HEX);
+				uint16_t SW_Version_Patch = ((uint16_t)shtpData[13] << 8) | ((uint16_t)shtpData[12]);
+				_debugPort->print(F(" SW Version Patch: 0x"));
+				_debugPort->println(SW_Version_Patch, HEX);
+			}
 			return (true);
 		}
 	}
@@ -123,6 +139,22 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
 	if (receivePacket() == true)
 	{
 		if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("SW Version Major: 0x"));
+				_debugPort->print(shtpData[2], HEX);
+				_debugPort->print(F(" SW Version Minor: 0x"));
+				_debugPort->print(shtpData[3], HEX);
+				uint32_t SW_Part_Number = ((uint32_t)shtpData[7] << 24) | ((uint32_t)shtpData[6] << 16) | ((uint32_t)shtpData[5] << 8) | ((uint32_t)shtpData[4]);
+				_debugPort->print(F(" SW Part Number: 0x"));
+				_debugPort->print(SW_Part_Number, HEX);
+				uint32_t SW_Build_Number = ((uint32_t)shtpData[11] << 24) | ((uint32_t)shtpData[10] << 16) | ((uint32_t)shtpData[9] << 8) | ((uint32_t)shtpData[8]);
+				_debugPort->print(F(" SW Build Number: 0x"));
+				_debugPort->print(SW_Build_Number, HEX);
+				uint16_t SW_Version_Patch = ((uint16_t)shtpData[13] << 8) | ((uint16_t)shtpData[12]);
+				_debugPort->print(F(" SW Version Patch: 0x"));
+				_debugPort->println(SW_Version_Patch, HEX);
+			}
 			return (true);
 	}
 
@@ -346,13 +378,19 @@ void BNO080::parseInputReport(void)
 	}
 	else if (shtpData[5] == SHTP_REPORT_COMMAND_RESPONSE)
 	{
-		Serial.println("!");
+		if (_printDebug == true)
+		{
+			_debugPort->println(F("!"));
+		}
 		//The BNO080 responds with this report to command requests. It's up to use to remember which command we issued.
 		uint8_t command = shtpData[5 + 2]; //This is the Command byte of the response
 
 		if (command == COMMAND_ME_CALIBRATE)
 		{
-			Serial.println("ME Cal report found!");
+			if (_printDebug == true)
+			{
+				_debugPort->println(F("ME Cal report found!"));
+			}
 			calibrationStatus = shtpData[5 + 5]; //R0 - Status (0 = success, non-zero = fail)
 		}
 	}
@@ -1231,6 +1269,7 @@ boolean BNO080::receivePacket(void)
 		if (dataLength == 0)
 		{
 			//Packet is empty
+			printHeader();
 			return (false); //All done
 		}
 		dataLength -= 4; //Remove the header bytes from the data count
@@ -1246,7 +1285,7 @@ boolean BNO080::receivePacket(void)
 		digitalWrite(_cs, HIGH); //Release BNO080
 
 		_spiPort->endTransaction();
-        //printPacket();
+		printPacket();
 	}
 	else //Do I2C
 	{
@@ -1440,6 +1479,24 @@ void BNO080::printPacket(void)
 		else
 			_debugPort->print(shtpHeader[2]);
 
+		_debugPort->println();
+	}
+}
+
+//Pretty prints the contents of the current shtp header (only)
+void BNO080::printHeader(void)
+{
+	if (_printDebug == true)
+	{
+		//Print the four byte header
+		_debugPort->print(F("Header:"));
+		for (uint8_t x = 0; x < 4; x++)
+		{
+			_debugPort->print(F(" "));
+			if (shtpHeader[x] < 0x10)
+				_debugPort->print(F("0"));
+			_debugPort->print(shtpHeader[x], HEX);
+		}
 		_debugPort->println();
 	}
 }
