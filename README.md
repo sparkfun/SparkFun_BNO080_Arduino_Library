@@ -29,6 +29,7 @@ Repository Contents
 * **/src** - Source files for the library (.cpp, .h).
 * **keywords.txt** - Keywords from this library that will be highlighted in the Arduino IDE.
 * **library.properties** - General library properties for the Arduino package manager.
+* **[CONTRIBUTING.md](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/blob/master/CONTRIBUTING.md)** - guidance on how to contribute to this library.
 
 Documentation
 --------------
