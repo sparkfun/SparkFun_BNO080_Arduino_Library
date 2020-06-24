@@ -22,7 +22,7 @@
 
 #include <Wire.h>
 
-#include "SparkFun_BNO080_Arduino_Library.h"
+#include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 BNO080 myIMU;
 
 void setup()
@@ -39,7 +39,7 @@ void setup()
 //  // Start i2c and BNO080
 //  Wire.flush();   // Reset I2C
 //  IMU.begin(BNO080_DEFAULT_ADDRESS, Wire);
-//  Wire.begin(4, 5); 
+//  Wire.begin(4, 5);
 //  Wire.setClockStretchLimit(4000);
 //  //=================================
 

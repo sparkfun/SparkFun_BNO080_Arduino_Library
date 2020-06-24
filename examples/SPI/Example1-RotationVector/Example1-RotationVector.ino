@@ -22,7 +22,7 @@
   The I2C pull up jumper must be cleared/open
 
   Hardware Connections:
-  Don't hook the BNO080 to a normal 5V Uno! Either use the Qwiic system or use a 
+  Don't hook the BNO080 to a normal 5V Uno! Either use the Qwiic system or use a
   microcontroller that runs at 3.3V.
   Arduino 13 = BNO080 SCK
   12 = SO
@@ -37,7 +37,7 @@
 
 #include <SPI.h>
 
-#include "SparkFun_BNO080_Arduino_Library.h"
+#include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 BNO080 myIMU;
 
 //These pins can be any GPIO
@@ -56,7 +56,7 @@ void setup()
   Serial.println("BNO080 SPI Read Example");
 
   myIMU.enableDebugging(Serial); //Pipe debug messages to Serial port
-  
+
   if(myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin) == false)
   {
     Serial.println("BNO080 over SPI not detected. Are you sure you have all 6 connections? Freezing...");
@@ -82,7 +82,7 @@ void loop()
 {
   Serial.println("Doing other things");
   delay(10); //You can do many other things. We spend most of our time printing and delaying.
-  
+
   //Look for reports from the IMU
   if (myIMU.dataAvailable() == true)
   {
@@ -108,5 +108,5 @@ void loop()
 
     Serial.println();
   }
-  
+
 }

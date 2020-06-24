@@ -9,7 +9,7 @@
   https://www.sparkfun.com/products/14686
 
   This example shows how to use the SPI interface and print two records at the same time:
-  Accel and Quat. 
+  Accel and Quat.
 
   This example shows how to output the i/j/k/real parts of the rotation vector.
   https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
@@ -35,7 +35,7 @@
 
 #include <SPI.h>
 
-#include "SparkFun_BNO080_Arduino_Library.h"
+#include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 BNO080 myIMU;
 
 //These pins can be any GPIO

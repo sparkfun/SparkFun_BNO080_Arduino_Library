@@ -30,7 +30,7 @@
 
 #include <Wire.h>
 
-#include "SparkFun_BNO080_Arduino_Library.h"
+#include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 BNO080 myIMU;
 
 byte activityConfidences[9]; //This array will be filled with the confidence levels of each possible activity
