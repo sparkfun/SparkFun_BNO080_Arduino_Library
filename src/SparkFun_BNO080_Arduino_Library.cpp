@@ -173,6 +173,11 @@ void BNO080::enableDebugging(Stream &debugPort)
 //Returns false if new readings are not available
 bool BNO080::dataAvailable(void)
 {
+	return (getReadings() != 0);
+}
+
+uint16_t BNO080::getReadings(void)
+{
 	//If we have an interrupt pin connection available, check if data is available.
 	//If int pin is not set, then we'll rely on receivePacket() to timeout
 	//See issue 13: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/13
@@ -187,21 +192,18 @@ bool BNO080::dataAvailable(void)
 		//Check to see if this packet is a sensor reporting its data to us
 		if (shtpHeader[2] == CHANNEL_REPORTS && shtpData[0] == SHTP_REPORT_BASE_TIMESTAMP)
 		{
-			parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
-			return (true);
+			return parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
 		}
 		else if (shtpHeader[2] == CHANNEL_CONTROL)
 		{
-			parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
-			return (true);
+			return parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
 		}
     else if(shtpHeader[2] == CHANNEL_GYRO)
     {
-      parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
-      return (true);
+      return parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
     }
 	}
-	return (false);
+	return 0;
 }
 
 //This function pulls the data from the command response report
@@ -222,7 +224,7 @@ bool BNO080::dataAvailable(void)
 //shtpData[5 + 6]: R6
 //shtpData[5 + 7]: R7
 //shtpData[5 + 8]: R8
-void BNO080::parseCommandReport(void)
+uint16_t BNO080::parseCommandReport(void)
 {
 	if (shtpData[0] == SHTP_REPORT_COMMAND_RESPONSE)
 	{
@@ -233,6 +235,7 @@ void BNO080::parseCommandReport(void)
 		{
 			calibrationStatus = shtpData[5 + 0]; //R0 - Status (0 = success, non-zero = fail)
 		}
+		return shtpData[0];
 	}
 	else
 	{
@@ -241,6 +244,7 @@ void BNO080::parseCommandReport(void)
 	}
 
 	//TODO additional feature reports may be strung together. Parse them all.
+	return 0;
 }
 
 //This function pulls the data from the input report
@@ -258,7 +262,7 @@ void BNO080::parseCommandReport(void)
 //shtpData[8:9]: k/accel z/gyro z/etc
 //shtpData[10:11]: real/gyro temp/etc
 //shtpData[12:13]: Accuracy estimate
-void BNO080::parseInputReport(void)
+uint16_t BNO080::parseInputReport(void)
 {
 	//Calculate the number of data bytes in this packet
 	int16_t dataLength = ((uint16_t)shtpHeader[1] << 8 | shtpHeader[0]);
@@ -279,7 +283,7 @@ void BNO080::parseInputReport(void)
 		rawFastGyroY = (uint16_t)shtpData[11] << 8 | shtpData[10];
 		rawFastGyroZ = (uint16_t)shtpData[13] << 8 | shtpData[12];
 
-		return;
+		return SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR;
 	}
 
 	uint8_t status = shtpData[5 + 2] & 0x03; //Get status bits
@@ -398,9 +402,11 @@ void BNO080::parseInputReport(void)
 	{
 		//This sensor report ID is unhandled.
 		//See reference manual to add additional feature reports as needed
+		return 0;
 	}
 
 	//TODO additional feature reports may be strung together. Parse them all.
+	return shtpData[5];
 }
 
 // Quaternion to Euler conversion
