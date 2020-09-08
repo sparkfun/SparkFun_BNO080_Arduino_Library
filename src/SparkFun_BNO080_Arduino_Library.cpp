@@ -184,7 +184,7 @@ uint16_t BNO080::getReadings(void)
 	if (_int != 255)
 	{
 		if (digitalRead(_int) == HIGH)
-			return (false);
+			return 0;
 	}
 
 	if (receivePacket() == true)
