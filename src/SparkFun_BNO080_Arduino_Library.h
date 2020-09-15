@@ -165,8 +165,9 @@ public:
 	void enableGyroIntegratedRotationVector(uint16_t timeBetweenReports);
 
 	bool dataAvailable(void);
-	void parseInputReport(void);   //Parse sensor readings out of report
-	void parseCommandReport(void); //Parse command responses out of report
+	uint16_t getReadings(void);
+	uint16_t parseInputReport(void);   //Parse sensor readings out of report
+	uint16_t parseCommandReport(void); //Parse command responses out of report
 
 	float getQuatI();
 	float getQuatJ();
