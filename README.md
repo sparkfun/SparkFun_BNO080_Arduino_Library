@@ -13,7 +13,7 @@ In addition the BNO080 IMU provides a built-in step counter, tap detector, activ
 
 Library written by Nathan Seidle ([SparkFun](http://www.sparkfun.com)).
 
-Thank to all those who have helped improve the library:
+Thanks to all those who have helped improve the library:
 
 * blendmaster for adding [Linear Accel report](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/4)
 * per1234 for fixing our [keywords file](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/12)
@@ -30,7 +30,7 @@ Repository Contents
 * **/src** - Source files for the library (.cpp, .h).
 * **keywords.txt** - Keywords from this library that will be highlighted in the Arduino IDE.
 * **library.properties** - General library properties for the Arduino package manager.
-* **[CONTRIBUTING.md](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/blob/master/CONTRIBUTING.md)** - guidance on how to contribute to this library.
+* **[CONTRIBUTING.md](./CONTRIBUTING.md)** - guidance on how to contribute to this library.
 
 Documentation
 --------------
@@ -43,7 +43,7 @@ License Information
 
 This product is _**open source**_!
 
-Please review the LICENSE.md file for license information.
+Please review the [LICENSE.md](./LICENSE.md) file for license information.
 
 If you have any questions or concerns on licensing, please contact techsupport@sparkfun.com.
 
