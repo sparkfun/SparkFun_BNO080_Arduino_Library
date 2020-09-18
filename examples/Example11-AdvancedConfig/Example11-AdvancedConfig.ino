@@ -3,7 +3,8 @@
   By: Nathan Seidle
   SparkFun Electronics
   Date: December 21st, 2017
-  License: This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
+  SparkFun code, firmware, and software is released under the MIT License.
+	Please see LICENSE.md for further details.
 
   Feel like supporting our work? Buy a board from SparkFun!
   https://www.sparkfun.com/products/14586
