@@ -169,7 +169,7 @@ public:
 	uint16_t parseInputReport(void);   //Parse sensor readings out of report
 	uint16_t parseCommandReport(void); //Parse command responses out of report
 
-	void getQuat(float &i, float &j, float &k, float &real, float radAccuracy, uint8_t &accuracy);
+	void getQuat(float &i, float &j, float &k, float &real, float &radAccuracy, uint8_t &accuracy);
 	float getQuatI();
 	float getQuatJ();
 	float getQuatK();

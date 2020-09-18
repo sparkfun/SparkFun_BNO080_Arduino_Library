@@ -487,13 +487,13 @@ float BNO080::getYaw()
 
 //Gets the full quaternion
 //i,j,k,real output floats
-void BNO080::getQuat(float &i, float &j, float &k, float &real, float radaccuracy, uint8_t &accuracy)
+void BNO080::getQuat(float &i, float &j, float &k, float &real, float &radAccuracy, uint8_t &accuracy)
 {
 	i = qToFloat(rawQuatI, rotationVector_Q1);
 	j = qToFloat(rawQuatJ, rotationVector_Q1);
 	k = qToFloat(rawQuatK, rotationVector_Q1);
 	real = qToFloat(rawQuatReal, rotationVector_Q1);
-	radaccuracy = qToFloat(rawQuatRadianAccuracy, rotationVector_Q1);
+	radAccuracy = qToFloat(rawQuatRadianAccuracy, rotationVector_Q1);
 	accuracy = quatAccuracy;
 }
 
