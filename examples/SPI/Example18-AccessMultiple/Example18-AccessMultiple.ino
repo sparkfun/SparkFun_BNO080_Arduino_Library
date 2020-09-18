@@ -5,47 +5,77 @@
   Date: September 08th, 2020
   License: This code is public domain.
 
+  This example shows how to use the SPI interface on the BNO080. It's fairly involved
+  and requires 7 comm wires (plus 2 power), soldering the PS1 jumper, and clearing
+  the I2C jumper. We recommend using the Qwiic I2C interface, but if you need speed
+  SPI is the way to go.
+
   This example shows how to access multiple data of one type using helper methods.
 
-  It takes about 1ms at 400kHz I2C to read a record from the sensor, but we are polling the sensor continually
-  between updates from the sensor. Use the interrupt pin on the BNO080 breakout to avoid polling.
+  Hardware modifications:
+  The PS1 jumper must be closed
+  The PS0 jumper must be open. PS0/WAKE is connected and the WAK pin is used to bring the IC out of sleep.
+  The I2C pull up jumper must be cleared/open
 
   Hardware Connections:
-  Attach the Qwiic Shield to your Arduino/Photon/ESP32 or other
-  Plug the sensor onto the shield
-  Serial.print it out at 9600 baud to serial monitor.
+  Don't hook the BNO080 to a normal 5V Uno! Either use the Qwiic system or use a
+  microcontroller that runs at 3.3V.
+  Arduino 13 = BNO080 SCK
+  12 = SO
+  11 = SI
+  10 = !CS
+  9 = WAK
+  8 = !INT
+  7 = !RST
+  3.3V = 3V3
+  GND = GND
 */
 
+#include <SPI.h>
 #include <Wire.h>
 
-#include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
+#include "SparkFun_BNO080_Arduino_Library.h"
 BNO080 myIMU;
 
-void setup()
-{
-  Serial.begin(9600);
+//These pins can be any GPIO
+byte imuCSPin = 10;
+byte imuWAKPin = 9;
+byte imuINTPin = 8;
+byte imuRSTPin = 7;
+
+//GPIO pins for SPI1 on teensy4.0
+//byte imuCSPin = 0;
+//byte imuWAKPin = 24;  //PS0
+//byte imuINTPin = 25;  //INT
+//byte imuRSTPin = 2;  //RST
+// SPI1 on Teensy 4.0 uses COPI Pin = 26 CIPO Pin = 1, SCK Pin = 27
+//byte imuCOPIPin = 26;
+//byte imuCIPOPin = 1;
+//byte imuSCKPin = 27;
+
+void setup() {
+  Serial.begin(115200);
   Serial.println();
-  Serial.println("BNO080 Multiple Read Example");
+  Serial.println("BNO080 SPI Multiple Read Example");
 
-  Wire.begin();
+  myIMU.enableDebugging(Serial); //Pipe debug messages to Serial port
 
-  //Are you using a ESP? Check this issue for more information: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/16
-//  //=================================
-//  delay(100); //  Wait for BNO to boot
-//  // Start i2c and BNO080
-//  Wire.flush();   // Reset I2C
-//  IMU.begin(BNO080_DEFAULT_ADDRESS, Wire);
-//  Wire.begin(4, 5);
-//  Wire.setClockStretchLimit(4000);
-//  //=================================
+  // set up the SPI pins utilized on Teensy 4.0
+  //SPI1.setMOSI(imuCOPIPin);
+  //SPI1.setMISO(imuCIPOPin);
+  //SPI1.setSCK(imuSCKPin);
+  // initialize SPI1:
+  //SPI1.begin();
 
-  if (myIMU.begin() == false)
+  if (myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin) == false)
   {
-    Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
-    while (1);
+    Serial.println("BNO080 over SPI not detected. Are you sure you have all 6 connections? Freezing...");
+    while(1);
   }
 
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
+  //You can also call begin with SPI clock speed and SPI port hardware
+  //myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin, 1000000);
+  //myIMU.beginSPI(imuCSPin, imuWAKPin, imuINTPin, imuRSTPin, 3000000, SPI1);
 
   myIMU.enableLinearAccelerometer(50);  // m/s^2 no gravity
   myIMU.enableRotationVector(50);  // quat
@@ -58,14 +88,16 @@ void setup()
   //Serial.println(F("Magnetometer enabled, Output in form x, y, z, accuracy, in uTesla"));
 }
 
-
-void loop() {
+void loop()
+{
+  Serial.println("Doing other things");
+  delay(10); //You can do many other things. We spend most of our time printing and delaying.
 
   //Look for data from the IMU
   if (myIMU.dataAvailable() == true)
   {
     // internal copies of the IMU data
-    float ax, ay, az, gx, gy, gz, qx, qy, qz, qw; //  mx, my, mz, (qx, qy, qz, qw = i,j,k, real)
+    float ax, ay, az, gx, gy, gz, qx, qy, qz, qw; // mx, my, mz,  // (qx, qy, qz, qw = i,j,k, real)
     byte linAccuracy = 0;
     byte gyroAccuracy = 0;
     //byte magAccuracy = 0;
@@ -77,7 +109,6 @@ void loop() {
     myIMU.getGyro(gx, gy, gz, gyroAccuracy);
     myIMU.getQuat(qx, qy, qz, qw, quatRadianAccuracy, quatAccuracy);
     //myIMU.getMag(mx, my, mz, magAccuracy);
-
 
     Serial.print(F("acc :"));
     Serial.print(ax, 2);
@@ -108,7 +139,6 @@ void loop() {
     Serial.print(F(","));
     printAccuracyLevel(magAccuracy);
 */
-
     Serial.print(F("quat:"));
     Serial.print(qx, 2);
     Serial.print(F(","));
