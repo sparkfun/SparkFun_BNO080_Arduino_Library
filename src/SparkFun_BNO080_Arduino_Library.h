@@ -164,6 +164,7 @@ public:
 	uint16_t parseInputReport(void);   //Parse sensor readings out of report
 	uint16_t parseCommandReport(void); //Parse command responses out of report
 
+	void getQuat(float &i, float &j, float &k, float &real, float &radAccuracy, uint8_t &accuracy);
 	float getQuatI();
 	float getQuatJ();
 	float getQuatK();
@@ -171,25 +172,30 @@ public:
 	float getQuatRadianAccuracy();
 	uint8_t getQuatAccuracy();
 
+	void getAccel(float &x, float &y, float &z, uint8_t &accuracy);
 	float getAccelX();
 	float getAccelY();
 	float getAccelZ();
 	uint8_t getAccelAccuracy();
 
+	void getLinAccel(float &x, float &y, float &z, uint8_t &accuracy);
 	float getLinAccelX();
 	float getLinAccelY();
 	float getLinAccelZ();
 	uint8_t getLinAccelAccuracy();
 
+	void getGyro(float &x, float &y, float &z, uint8_t &accuracy);
 	float getGyroX();
 	float getGyroY();
 	float getGyroZ();
 	uint8_t getGyroAccuracy();
 
+	void getFastGyro(float &x, float &y, float &z);
 	float getFastGyroX();
 	float getFastGyroY();
 	float getFastGyroZ();
 
+	void getMag(float &x, float &y, float &z, uint8_t &accuracy);
 	float getMagX();
 	float getMagY();
 	float getMagZ();
