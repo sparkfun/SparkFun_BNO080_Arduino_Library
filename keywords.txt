@@ -47,6 +47,7 @@ enableRawMagnetometer	KEYWORD2
 enableGyroIntegratedRotationVector	KEYWORD2
 
 dataAvailable	KEYWORD2
+getReadings	KEYWORD2
 parseInputReport	KEYWORD2
 parseCommandReport	KEYWORD2
 
