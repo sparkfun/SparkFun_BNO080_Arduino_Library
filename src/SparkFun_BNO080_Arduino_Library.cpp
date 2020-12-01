@@ -945,10 +945,10 @@ void BNO080::softReset(void)
 	//Read all incoming data and flush it
 	delay(50);
 	while (receivePacket() == true)
-		;
+		; //delay(1);
 	delay(50);
 	while (receivePacket() == true)
-		;
+		; //delay(1);
 }
 
 //Get the reason for the last reset
@@ -1328,7 +1328,7 @@ boolean BNO080::receivePacket(void)
 		shtpHeader[3] = sequenceNumber;
 
 		//Calculate the number of data bytes in this packet
-		uint16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
+		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
 		//This bit indicates if this package is a continuation of the last. Ignore it for now.
 		//TODO catch this as an error and exit
@@ -1355,7 +1355,7 @@ boolean BNO080::receivePacket(void)
 	}
 	else //Do I2C
 	{
-		_i2cPort->requestFrom((uint8_t)_deviceAddress, (uint8_t)4); //Ask for four bytes to find out how much data we need to read
+		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)4); //Ask for four bytes to find out how much data we need to read
 		if (waitForI2C() == false)
 			return (false); //Error
 
@@ -1372,10 +1372,17 @@ boolean BNO080::receivePacket(void)
 		shtpHeader[3] = sequenceNumber;
 
 		//Calculate the number of data bytes in this packet
-		int16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
+		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
 		//This bit indicates if this package is a continuation of the last. Ignore it for now.
 		//TODO catch this as an error and exit
+
+		// if (_printDebug == true)
+		// {
+		// 	_debugPort->print(F("receivePacket (I2C): dataLength is: "));
+		// 	_debugPort->println(dataLength);
+		// }
+
 		if (dataLength == 0)
 		{
 			//Packet is empty
@@ -1403,7 +1410,7 @@ boolean BNO080::getData(uint16_t bytesRemaining)
 		if (numberOfBytesToRead > (I2C_BUFFER_LENGTH - 4))
 			numberOfBytesToRead = (I2C_BUFFER_LENGTH - 4);
 
-		_i2cPort->requestFrom((uint8_t)_deviceAddress, (uint8_t)(numberOfBytesToRead + 4));
+		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)(numberOfBytesToRead + 4));
 		if (waitForI2C() == false)
 			return (0); //Error
 
@@ -1481,8 +1488,16 @@ boolean BNO080::sendPacket(uint8_t channelNumber, uint8_t dataLength)
 		{
 			_i2cPort->write(shtpData[i]);
 		}
-		if (_i2cPort->endTransmission() != 0)
+
+		uint8_t i2cResult = _i2cPort->endTransmission();
+
+		if (i2cResult != 0)
 		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("sendPacket(I2C): endTransmission returned: "));
+				_debugPort->println(i2cResult);
+			}
 			return (false);
 		}
 	}
