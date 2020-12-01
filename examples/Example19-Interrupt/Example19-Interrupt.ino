@@ -39,8 +39,6 @@ void setup()
   Serial.println("BNO080 Read example with Interrupt handler, getReading and multiple access");
 
   Wire.begin();
-  // imuINTPin should be input and pulled-up to be used as active-low interrupt
-  pinMode(imuINTPin, INPUT_PULLUP);
 
   //Are you using a ESP? Check this issue for more information: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/16
 //  //=================================
@@ -52,6 +50,7 @@ void setup()
 //  Wire.setClockStretchLimit(4000);
 //  //=================================
 
+// imuINTPin is used as an active-low interrupt. .begin configures the pinMode as INPUT_PULLUP
   if (myIMU.begin(BNO080_DEFAULT_ADDRESS, Wire, imuINTPin) == false)
   {
     Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
