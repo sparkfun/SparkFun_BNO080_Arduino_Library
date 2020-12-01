@@ -47,9 +47,11 @@ enableRawMagnetometer	KEYWORD2
 enableGyroIntegratedRotationVector	KEYWORD2
 
 dataAvailable	KEYWORD2
+getReadings	KEYWORD2
 parseInputReport	KEYWORD2
 parseCommandReport	KEYWORD2
 
+getQuat	KEYWORD2
 getQuatI	KEYWORD2
 getQuatJ	KEYWORD2
 getQuatK	KEYWORD2
@@ -57,26 +59,30 @@ getQuatReal	KEYWORD2
 getQuatRadianAccuracy	KEYWORD2
 getQuatAccuracy	KEYWORD2
 
+getAccel	KEYWORD2
 getAccelX	KEYWORD2
 getAccelY	KEYWORD2
 getAccelZ	KEYWORD2
 getAccelAccuracy	KEYWORD2
 
+getGyro	KEYWORD2
 getGyroX	KEYWORD2
 getGyroY	KEYWORD2
 getGyroZ	KEYWORD2
 getGyroAccuracy	KEYWORD2
 
+getFastGyro	KEYWORD2
 getFastGyroX	KEYWORD2
 getFastGyroY	KEYWORD2
 getFastGyroZ	KEYWORD2
 
-
+getMag	KEYWORD2
 getMagX	KEYWORD2
 getMagY	KEYWORD2
 getMagZ	KEYWORD2
 getMagAccuracy	KEYWORD2
 
+getLinAccel	KEYWORD2
 getLinAccelX	KEYWORD2
 getLinAccelY	KEYWORD2
 getLinAccelZ	KEYWORD2

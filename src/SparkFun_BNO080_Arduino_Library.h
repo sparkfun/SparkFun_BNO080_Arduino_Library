@@ -18,13 +18,8 @@
   Development environment specifics:
   Arduino IDE 1.8.3
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  SparkFun code, firmware, and software is released under the MIT License.
+	Please see LICENSE.md for further details.
 */
 
 #pragma once
@@ -165,9 +160,11 @@ public:
 	void enableGyroIntegratedRotationVector(uint16_t timeBetweenReports);
 
 	bool dataAvailable(void);
-	void parseInputReport(void);   //Parse sensor readings out of report
-	void parseCommandReport(void); //Parse command responses out of report
+	uint16_t getReadings(void);
+	uint16_t parseInputReport(void);   //Parse sensor readings out of report
+	uint16_t parseCommandReport(void); //Parse command responses out of report
 
+	void getQuat(float &i, float &j, float &k, float &real, float &radAccuracy, uint8_t &accuracy);
 	float getQuatI();
 	float getQuatJ();
 	float getQuatK();
@@ -175,25 +172,30 @@ public:
 	float getQuatRadianAccuracy();
 	uint8_t getQuatAccuracy();
 
+	void getAccel(float &x, float &y, float &z, uint8_t &accuracy);
 	float getAccelX();
 	float getAccelY();
 	float getAccelZ();
 	uint8_t getAccelAccuracy();
 
+	void getLinAccel(float &x, float &y, float &z, uint8_t &accuracy);
 	float getLinAccelX();
 	float getLinAccelY();
 	float getLinAccelZ();
 	uint8_t getLinAccelAccuracy();
 
+	void getGyro(float &x, float &y, float &z, uint8_t &accuracy);
 	float getGyroX();
 	float getGyroY();
 	float getGyroZ();
 	uint8_t getGyroAccuracy();
 
+	void getFastGyro(float &x, float &y, float &z);
 	float getFastGyroX();
 	float getFastGyroY();
 	float getFastGyroZ();
 
+	void getMag(float &x, float &y, float &z, uint8_t &accuracy);
 	float getMagX();
 	float getMagY();
 	float getMagZ();

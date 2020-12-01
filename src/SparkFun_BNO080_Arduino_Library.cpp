@@ -18,13 +18,8 @@
   Development environment specifics:
   Arduino IDE 1.8.5
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	SparkFun code, firmware, and software is released under the MIT License.
+	Please see LICENSE.md for further details.
 */
 
 #include "SparkFun_BNO080_Arduino_Library.h"
@@ -35,7 +30,11 @@ boolean BNO080::begin(uint8_t deviceAddress, TwoWire &wirePort, uint8_t intPin)
 {
 	_deviceAddress = deviceAddress; //If provided, store the I2C address from user
 	_i2cPort = &wirePort;			//Grab which port the user wants us to use
-	_int = intPin;					//Get the pin that the user wants to use for interrupts. By default, it's NULL and we'll not use it in dataAvailable() function.
+	_int = intPin;					//Get the pin that the user wants to use for interrupts. By default, it's 255 and we'll not use it in dataAvailable() function.
+	if (_int != 255)
+	{
+		pinMode(_int, INPUT_PULLUP);
+	}
 
 	//We expect caller to begin their I2C port, with the speed of their choice external to the library
 	//But if they forget, we start the hardware here.
@@ -173,13 +172,18 @@ void BNO080::enableDebugging(Stream &debugPort)
 //Returns false if new readings are not available
 bool BNO080::dataAvailable(void)
 {
+	return (getReadings() != 0);
+}
+
+uint16_t BNO080::getReadings(void)
+{
 	//If we have an interrupt pin connection available, check if data is available.
 	//If int pin is not set, then we'll rely on receivePacket() to timeout
 	//See issue 13: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/13
 	if (_int != 255)
 	{
 		if (digitalRead(_int) == HIGH)
-			return (false);
+			return 0;
 	}
 
 	if (receivePacket() == true)
@@ -187,21 +191,18 @@ bool BNO080::dataAvailable(void)
 		//Check to see if this packet is a sensor reporting its data to us
 		if (shtpHeader[2] == CHANNEL_REPORTS && shtpData[0] == SHTP_REPORT_BASE_TIMESTAMP)
 		{
-			parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
-			return (true);
+			return parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
 		}
 		else if (shtpHeader[2] == CHANNEL_CONTROL)
 		{
-			parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
-			return (true);
+			return parseCommandReport(); //This will update responses to commands, calibrationStatus, etc.
 		}
     else if(shtpHeader[2] == CHANNEL_GYRO)
     {
-      parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
-      return (true);
+      return parseInputReport(); //This will update the rawAccelX, etc variables depending on which feature report is found
     }
 	}
-	return (false);
+	return 0;
 }
 
 //This function pulls the data from the command response report
@@ -222,7 +223,7 @@ bool BNO080::dataAvailable(void)
 //shtpData[5 + 6]: R6
 //shtpData[5 + 7]: R7
 //shtpData[5 + 8]: R8
-void BNO080::parseCommandReport(void)
+uint16_t BNO080::parseCommandReport(void)
 {
 	if (shtpData[0] == SHTP_REPORT_COMMAND_RESPONSE)
 	{
@@ -233,6 +234,7 @@ void BNO080::parseCommandReport(void)
 		{
 			calibrationStatus = shtpData[5 + 0]; //R0 - Status (0 = success, non-zero = fail)
 		}
+		return shtpData[0];
 	}
 	else
 	{
@@ -241,6 +243,7 @@ void BNO080::parseCommandReport(void)
 	}
 
 	//TODO additional feature reports may be strung together. Parse them all.
+	return 0;
 }
 
 //This function pulls the data from the input report
@@ -258,7 +261,7 @@ void BNO080::parseCommandReport(void)
 //shtpData[8:9]: k/accel z/gyro z/etc
 //shtpData[10:11]: real/gyro temp/etc
 //shtpData[12:13]: Accuracy estimate
-void BNO080::parseInputReport(void)
+uint16_t BNO080::parseInputReport(void)
 {
 	//Calculate the number of data bytes in this packet
 	int16_t dataLength = ((uint16_t)shtpHeader[1] << 8 | shtpHeader[0]);
@@ -279,7 +282,7 @@ void BNO080::parseInputReport(void)
 		rawFastGyroY = (uint16_t)shtpData[11] << 8 | shtpData[10];
 		rawFastGyroZ = (uint16_t)shtpData[13] << 8 | shtpData[12];
 
-		return;
+		return SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR;
 	}
 
 	uint8_t status = shtpData[5 + 2] & 0x03; //Get status bits
@@ -398,9 +401,11 @@ void BNO080::parseInputReport(void)
 	{
 		//This sensor report ID is unhandled.
 		//See reference manual to add additional feature reports as needed
+		return 0;
 	}
 
 	//TODO additional feature reports may be strung together. Parse them all.
+	return shtpData[5];
 }
 
 // Quaternion to Euler conversion
@@ -479,6 +484,18 @@ float BNO080::getYaw()
 	return (yaw);
 }
 
+//Gets the full quaternion
+//i,j,k,real output floats
+void BNO080::getQuat(float &i, float &j, float &k, float &real, float &radAccuracy, uint8_t &accuracy)
+{
+	i = qToFloat(rawQuatI, rotationVector_Q1);
+	j = qToFloat(rawQuatJ, rotationVector_Q1);
+	k = qToFloat(rawQuatK, rotationVector_Q1);
+	real = qToFloat(rawQuatReal, rotationVector_Q1);
+	radAccuracy = qToFloat(rawQuatRadianAccuracy, rotationVector_Q1);
+	accuracy = quatAccuracy;
+}
+
 //Return the rotation vector quaternion I
 float BNO080::getQuatI()
 {
@@ -520,6 +537,16 @@ uint8_t BNO080::getQuatAccuracy()
 	return (quatAccuracy);
 }
 
+//Gets the full acceleration
+//x,y,z output floats
+void BNO080::getAccel(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawAccelX, accelerometer_Q1);
+	y = qToFloat(rawAccelY, accelerometer_Q1);
+	z = qToFloat(rawAccelZ, accelerometer_Q1);
+	accuracy = accelAccuracy;
+}
+
 //Return the acceleration component
 float BNO080::getAccelX()
 {
@@ -549,6 +576,16 @@ uint8_t BNO080::getAccelAccuracy()
 
 // linear acceleration, i.e. minus gravity
 
+//Gets the full lin acceleration
+//x,y,z output floats
+void BNO080::getLinAccel(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawLinAccelX, linear_accelerometer_Q1);
+	y = qToFloat(rawLinAccelY, linear_accelerometer_Q1);
+	z = qToFloat(rawLinAccelZ, linear_accelerometer_Q1);
+	accuracy = accelLinAccuracy;
+}
+
 //Return the acceleration component
 float BNO080::getLinAccelX()
 {
@@ -574,6 +611,16 @@ float BNO080::getLinAccelZ()
 uint8_t BNO080::getLinAccelAccuracy()
 {
 	return (accelLinAccuracy);
+}
+
+//Gets the full gyro vector
+//x,y,z output floats
+void BNO080::getGyro(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawGyroX, gyro_Q1);
+	y = qToFloat(rawGyroY, gyro_Q1);
+	z = qToFloat(rawGyroZ, gyro_Q1);
+	accuracy = gyroAccuracy;
 }
 
 //Return the gyro component
@@ -603,6 +650,16 @@ uint8_t BNO080::getGyroAccuracy()
 	return (gyroAccuracy);
 }
 
+//Gets the full mag vector
+//x,y,z output floats
+void BNO080::getMag(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(rawMagX, magnetometer_Q1);
+	y = qToFloat(rawMagY, magnetometer_Q1);
+	z = qToFloat(rawMagZ, magnetometer_Q1);
+	accuracy = magAccuracy;
+}
+
 //Return the magnetometer component
 float BNO080::getMagX()
 {
@@ -628,6 +685,15 @@ float BNO080::getMagZ()
 uint8_t BNO080::getMagAccuracy()
 {
 	return (magAccuracy);
+}
+
+//Gets the full high rate gyro vector
+//x,y,z output floats
+void BNO080::getFastGyro(float &x, float &y, float &z)
+{
+	x = qToFloat(rawFastGyroX, angular_velocity_Q1);
+	y = qToFloat(rawFastGyroY, angular_velocity_Q1);
+	z = qToFloat(rawFastGyroZ, angular_velocity_Q1);
 }
 
 // Return the high refresh rate gyro component
@@ -879,10 +945,10 @@ void BNO080::softReset(void)
 	//Read all incoming data and flush it
 	delay(50);
 	while (receivePacket() == true)
-		;
+		; //delay(1);
 	delay(50);
 	while (receivePacket() == true)
-		;
+		; //delay(1);
 }
 
 //Get the reason for the last reset
@@ -1262,7 +1328,7 @@ boolean BNO080::receivePacket(void)
 		shtpHeader[3] = sequenceNumber;
 
 		//Calculate the number of data bytes in this packet
-		uint16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
+		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
 		//This bit indicates if this package is a continuation of the last. Ignore it for now.
 		//TODO catch this as an error and exit
@@ -1289,7 +1355,7 @@ boolean BNO080::receivePacket(void)
 	}
 	else //Do I2C
 	{
-		_i2cPort->requestFrom((uint8_t)_deviceAddress, (uint8_t)4); //Ask for four bytes to find out how much data we need to read
+		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)4); //Ask for four bytes to find out how much data we need to read
 		if (waitForI2C() == false)
 			return (false); //Error
 
@@ -1306,10 +1372,17 @@ boolean BNO080::receivePacket(void)
 		shtpHeader[3] = sequenceNumber;
 
 		//Calculate the number of data bytes in this packet
-		int16_t dataLength = ((uint16_t)packetMSB << 8 | packetLSB);
+		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
 		//This bit indicates if this package is a continuation of the last. Ignore it for now.
 		//TODO catch this as an error and exit
+
+		// if (_printDebug == true)
+		// {
+		// 	_debugPort->print(F("receivePacket (I2C): dataLength is: "));
+		// 	_debugPort->println(dataLength);
+		// }
+
 		if (dataLength == 0)
 		{
 			//Packet is empty
@@ -1337,7 +1410,7 @@ boolean BNO080::getData(uint16_t bytesRemaining)
 		if (numberOfBytesToRead > (I2C_BUFFER_LENGTH - 4))
 			numberOfBytesToRead = (I2C_BUFFER_LENGTH - 4);
 
-		_i2cPort->requestFrom((uint8_t)_deviceAddress, (uint8_t)(numberOfBytesToRead + 4));
+		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)(numberOfBytesToRead + 4));
 		if (waitForI2C() == false)
 			return (0); //Error
 
@@ -1415,8 +1488,16 @@ boolean BNO080::sendPacket(uint8_t channelNumber, uint8_t dataLength)
 		{
 			_i2cPort->write(shtpData[i]);
 		}
-		if (_i2cPort->endTransmission() != 0)
+
+		uint8_t i2cResult = _i2cPort->endTransmission();
+
+		if (i2cResult != 0)
 		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("sendPacket(I2C): endTransmission returned: "));
+				_debugPort->println(i2cResult);
+			}
 			return (false);
 		}
 	}
