@@ -34,7 +34,7 @@ byte imuINTPin = 3;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println();
   Serial.println("BNO080 Read example with Interrupt handler, getReading and multiple access");
 
@@ -50,7 +50,9 @@ void setup()
 //  Wire.setClockStretchLimit(4000);
 //  //=================================
 
-// imuINTPin is used as an active-low interrupt. .begin configures the pinMode as INPUT_PULLUP
+  //myIMU.enableDebugging(); // Uncomment this line to enable debug messages on Serial
+
+  // imuINTPin is used as an active-low interrupt. .begin configures the pinMode as INPUT_PULLUP
   if (myIMU.begin(BNO080_DEFAULT_ADDRESS, Wire, imuINTPin) == false)
   {
     Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
