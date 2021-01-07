@@ -897,7 +897,7 @@ bool BNO080::readFRSdata(uint16_t recordID, uint8_t startLocation, uint8_t words
 			//We have the packet, inspect it for the right contents
 			//See page 40. Report ID should be 0xF3 and the FRS types should match the thing we requested
 			if (shtpData[0] == SHTP_REPORT_FRS_READ_RESPONSE)
-				if (((uint16_t)shtpData[13] << 8 | shtpData[12]) == recordID)
+				if (((((uint16_t)shtpData[13]) << 8) | shtpData[12]) == recordID)
 					break; //This packet is one we are looking for
 		}
 
