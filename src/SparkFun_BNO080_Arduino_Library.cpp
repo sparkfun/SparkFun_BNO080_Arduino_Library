@@ -345,6 +345,10 @@ uint16_t BNO080::parseInputReport(void)
 		// not game rot vector and not ar/vr stabilized rotation vector
 		rawQuatRadianAccuracy = data5;
 	}
+	else if (shtpData[5] == SENSOR_REPORTID_TAP_DETECTOR)
+	{
+		tapDetector = shtpData[5 + 4]; //Byte 4 only
+	}
 	else if (shtpData[5] == SENSOR_REPORTID_STEP_COUNTER)
 	{
 		stepCount = data3; //Bytes 8/9
@@ -717,6 +721,14 @@ float BNO080::getFastGyroZ()
 	return (gyro);
 }
 
+//Return the tap detector
+uint8_t BNO080::getTapDetector()
+{
+	uint8_t previousTapDetector = tapDetector;
+	tapDetector = 0; //Reset so user code sees exactly one tap
+	return (previousTapDetector);
+}
+
 //Return the step count
 uint16_t BNO080::getStepCount()
 {
@@ -1034,6 +1046,12 @@ void BNO080::enableMagnetometer(uint16_t timeBetweenReports)
 void BNO080::enableGyroIntegratedRotationVector(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR, timeBetweenReports);
+}
+
+//Sends the packet to enable the tap detector
+void BNO080::enableTapDetector(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_TAP_DETECTOR, timeBetweenReports);
 }
 
 //Sends the packet to enable the step counter
