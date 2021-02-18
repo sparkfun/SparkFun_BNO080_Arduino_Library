@@ -132,6 +132,8 @@ public:
 
 	void softReset();	  //Try to reset the IMU via software
 	uint8_t resetReason(); //Query the IMU for the reason it last reset
+	void modeOn();	  //Use the executable channel to turn the BNO on
+	void modeSleep();	  //Use the executable channel to put the BNO to sleep
 
 	float qToFloat(int16_t fixedPointValue, uint8_t qPoint); //Given a Q value, converts fixed point floating to regular floating point number
 
@@ -151,6 +153,7 @@ public:
 	void enableLinearAccelerometer(uint16_t timeBetweenReports);
 	void enableGyro(uint16_t timeBetweenReports);
 	void enableMagnetometer(uint16_t timeBetweenReports);
+	void enableTapDetector(uint16_t timeBetweenReports);
 	void enableStepCounter(uint16_t timeBetweenReports);
 	void enableStabilityClassifier(uint16_t timeBetweenReports);
 	void enableActivityClassifier(uint16_t timeBetweenReports, uint32_t activitiesToEnable, uint8_t (&activityConfidences)[9]);
@@ -211,6 +214,7 @@ public:
 	void requestCalibrationStatus(); //Sends command to get status
 	boolean calibrationComplete();   //Checks ME Cal response for byte 5, R0 - Status
 
+	uint8_t getTapDetector();
 	uint32_t getTimeStamp();
 	uint16_t getStepCount();
 	uint8_t getStabilityClassifier();
@@ -276,6 +280,7 @@ private:
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
 	uint16_t rawFastGyroX, rawFastGyroY, rawFastGyroZ;
+	uint8_t tapDetector;
 	uint16_t stepCount;
 	uint32_t timeStamp;
 	uint8_t stabilityClassifier;
