@@ -963,6 +963,42 @@ void BNO080::softReset(void)
 		; //delay(1);
 }
 
+//Set the operating mode to "On"
+//(This one is for @jerabaul29)
+void BNO080::modeOn(void)
+{
+	shtpData[0] = 2; //On
+
+	//Attempt to start communication with sensor
+	sendPacket(CHANNEL_EXECUTABLE, 1); //Transmit packet on channel 1, 1 byte
+
+	//Read all incoming data and flush it
+	delay(50);
+	while (receivePacket() == true)
+		; //delay(1);
+	delay(50);
+	while (receivePacket() == true)
+		; //delay(1);
+}
+
+//Set the operating mode to "Sleep"
+//(This one is for @jerabaul29)
+void BNO080::modeSleep(void)
+{
+	shtpData[0] = 3; //Sleep
+
+	//Attempt to start communication with sensor
+	sendPacket(CHANNEL_EXECUTABLE, 1); //Transmit packet on channel 1, 1 byte
+
+	//Read all incoming data and flush it
+	delay(50);
+	while (receivePacket() == true)
+		; //delay(1);
+	delay(50);
+	while (receivePacket() == true)
+		; //delay(1);
+}
+
 //Get the reason for the last reset
 //1 = POR, 2 = Internal reset, 3 = Watchdog, 4 = External reset, 5 = Other
 uint8_t BNO080::resetReason()
