@@ -1430,6 +1430,14 @@ boolean BNO080::receivePacket(void)
 	}
 	else //Do I2C
 	{
+		if (_i2cPort->available() > 0) // Don't ask me why, but including this seems to make a big difference to the reliability
+		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("receivePacket (I2C): before calling requestFrom, _i2cPort->available was: ")); _debugPort->println(_i2cPort->available());
+			}
+		}
+
 		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)4); //Ask for four bytes to find out how much data we need to read
 		if (waitForI2C((size_t)4) == false)
 			return (false); //Error
@@ -1511,6 +1519,14 @@ boolean BNO080::getData(uint16_t bytesRemaining, uint8_t channelNumber, uint8_t 
 		uint16_t numberOfBytesToRead = bytesRemaining;
 		if (numberOfBytesToRead > (I2C_BUFFER_LENGTH - 4))
 			numberOfBytesToRead = (I2C_BUFFER_LENGTH - 4);
+
+		if (_i2cPort->available() > 0) // Don't ask me why, but including this seems to make a big difference to the reliability
+		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("getData: before calling requestFrom, _i2cPort->available was: ")); _debugPort->println(_i2cPort->available());
+			}
+		}
 
 		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)(numberOfBytesToRead + 4));
 		if (waitForI2C((size_t)(numberOfBytesToRead + 4)) == false)
