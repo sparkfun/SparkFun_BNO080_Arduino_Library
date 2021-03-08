@@ -1485,7 +1485,10 @@ boolean BNO080::receivePacket(void)
 		}
 		dataLength -= 4; //Remove the header bytes from the data count
 
-		getData(dataLength, channelNumber, sequenceNumber);
+		if (getData(dataLength, channelNumber, sequenceNumber) == false)
+		{
+			return (false); // If getData returns false - due to an I2C timeout - return false
+		}
 	}
 
 	return (true); //We're done!
