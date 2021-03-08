@@ -504,6 +504,18 @@ void BNO080::getQuat(float &i, float &j, float &k, float &real, float &radAccura
 float BNO080::getQuatI()
 {
 	float quat = qToFloat(rawQuatI, rotationVector_Q1);
+	if (_printDebug == true)
+	{
+		if ((quat < -1.0) || (quat > 1.0))
+		{
+			_debugPort->print(F("getQuatI: quat: ")); // Debug the occasional non-unitary Quat
+			_debugPort->print(quat, 2);
+			_debugPort->print(F(" rawQuatI: "));
+			_debugPort->print(rawQuatI);
+			_debugPort->print(F(" rotationVector_Q1: "));
+			_debugPort->println(rotationVector_Q1);
+		}
+	}
 	return (quat);
 }
 
@@ -511,6 +523,18 @@ float BNO080::getQuatI()
 float BNO080::getQuatJ()
 {
 	float quat = qToFloat(rawQuatJ, rotationVector_Q1);
+	if (_printDebug == true)
+	{
+		if ((quat < -1.0) || (quat > 1.0)) // Debug the occasional non-unitary Quat
+		{
+			_debugPort->print(F("getQuatJ: quat: "));
+			_debugPort->print(quat, 2);
+			_debugPort->print(F(" rawQuatJ: "));
+			_debugPort->print(rawQuatJ);
+			_debugPort->print(F(" rotationVector_Q1: "));
+			_debugPort->println(rotationVector_Q1);
+		}
+	}
 	return (quat);
 }
 
@@ -518,6 +542,18 @@ float BNO080::getQuatJ()
 float BNO080::getQuatK()
 {
 	float quat = qToFloat(rawQuatK, rotationVector_Q1);
+	if (_printDebug == true)
+	{
+		if ((quat < -1.0) || (quat > 1.0)) // Debug the occasional non-unitary Quat
+		{
+			_debugPort->print(F("getQuatK: quat: "));
+			_debugPort->print(quat, 2);
+			_debugPort->print(F(" rawQuatK: "));
+			_debugPort->print(rawQuatK);
+			_debugPort->print(F(" rotationVector_Q1: "));
+			_debugPort->println(rotationVector_Q1);
+		}
+	}
 	return (quat);
 }
 
