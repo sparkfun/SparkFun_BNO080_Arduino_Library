@@ -956,11 +956,23 @@ void BNO080::softReset(void)
 
 	//Read all incoming data and flush it
 	delay(50);
+
+	if (_printDebug == true)
+		_debugPort->println(F("softReset: first receivePacket"));
+
 	while (receivePacket() == true)
 		; //delay(1);
+
 	delay(50);
+
+	if (_printDebug == true)
+		_debugPort->println(F("softReset: second receivePacket"));
+
 	while (receivePacket() == true)
 		; //delay(1);
+
+	if (_printDebug == true)
+		_debugPort->println(F("softReset: complete"));
 }
 
 //Set the operating mode to "On"
@@ -1320,11 +1332,13 @@ void BNO080::saveCalibration()
 
 //Wait a certain time for incoming I2C bytes before giving up
 //Returns false if failed
-boolean BNO080::waitForI2C()
+//See discussion at: https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/issues/3
+//This function _should_ be unnecessary but communication with the BNO080 stalls without it...
+boolean BNO080::waitForI2C(size_t expectedLength)
 {
 	for (uint8_t counter = 0; counter < 100; counter++) //Don't got more than 255
 	{
-		if (_i2cPort->available() > 0)
+		if (_i2cPort->available() >= expectedLength) // Greater than should be impossible...
 			return (true);
 		delay(1);
 	}
@@ -1410,7 +1424,7 @@ boolean BNO080::receivePacket(void)
 	else //Do I2C
 	{
 		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)4); //Ask for four bytes to find out how much data we need to read
-		if (waitForI2C() == false)
+		if (waitForI2C((size_t)4) == false)
 			return (false); //Error
 
 		//Get the first four bytes, aka the packet header
@@ -1425,13 +1439,27 @@ boolean BNO080::receivePacket(void)
 		shtpHeader[2] = channelNumber;
 		shtpHeader[3] = sequenceNumber;
 
+		//After a softReset, the BNO can respond with a 'corrupt' packet where the length is huge
+		//and the channelNumber is invalid. Test channelNumber here:
+		if (channelNumber > CHANNEL_GYRO)
+		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("receivePacket (I2C): invalid channelNumber: "));
+				_debugPort->println(channelNumber);
+			}
+			//return (false); <- Error - we should return(false) - but don't as it messes up softReset
+		}
+
 		//Calculate the number of data bytes in this packet
 		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
 		dataLength &= ~(1 << 15); //Clear the MSbit.
 		//This bit indicates if this package is a continuation of the last. Ignore it for now.
 		//TODO catch this as an error and exit
 
-		// if (_printDebug == true)
+		// if ((_printDebug == true)
+		// 	//&& (dataLength > 0) // Comment this line to avoid printing when dataLength is zero
+		// 	)
 		// {
 		// 	_debugPort->print(F("receivePacket (I2C): dataLength is: "));
 		// 	_debugPort->println(dataLength);
@@ -1444,7 +1472,7 @@ boolean BNO080::receivePacket(void)
 		}
 		dataLength -= 4; //Remove the header bytes from the data count
 
-		getData(dataLength);
+		getData(dataLength, channelNumber, sequenceNumber);
 	}
 
 	return (true); //We're done!
@@ -1453,9 +1481,13 @@ boolean BNO080::receivePacket(void)
 //Sends multiple requests to sensor until all data bytes are received from sensor
 //The shtpData buffer has max capacity of MAX_PACKET_SIZE. Any bytes over this amount will be lost.
 //Arduino I2C read limit is 32 bytes. Header is 4 bytes, so max data we can read per interation is 28 bytes
-boolean BNO080::getData(uint16_t bytesRemaining)
+//Notes:	getData is public and some users may be calling it directly? Unlikely, but even so...
+//				For backward compatibility, channelNumber and sequenceNumber will both default to 255 - instead of being mandatory
+boolean BNO080::getData(uint16_t bytesRemaining, uint8_t channelNumber, uint8_t sequenceNumber)
 {
 	uint16_t dataSpot = 0; //Start at the beginning of shtpData array
+
+	uint8_t expectedSequenceNumber = sequenceNumber + 1; // The expected sequence number for error checking
 
 	//Setup a series of chunked 32 byte reads
 	while (bytesRemaining > 0)
@@ -1465,14 +1497,54 @@ boolean BNO080::getData(uint16_t bytesRemaining)
 			numberOfBytesToRead = (I2C_BUFFER_LENGTH - 4);
 
 		_i2cPort->requestFrom((uint8_t)_deviceAddress, (size_t)(numberOfBytesToRead + 4));
-		if (waitForI2C() == false)
-			return (0); //Error
+		if (waitForI2C((size_t)(numberOfBytesToRead + 4)) == false)
+			return (false); //Error
 
-		//The first four bytes are header bytes and are throw away
-		_i2cPort->read();
-		_i2cPort->read();
-		_i2cPort->read();
-		_i2cPort->read();
+		//The first four bytes are header bytes and are throw away but lets use then for error checking
+		uint8_t packetLSB = _i2cPort->read();
+		uint8_t packetMSB = _i2cPort->read();
+		uint8_t thisChannelNumber = _i2cPort->read();
+		uint8_t thisSequenceNumber = _i2cPort->read();
+
+		//Calculate the number of data bytes in this packet
+		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
+		dataLength &= ~(1 << 15); //Clear the MSbit.
+		//This bit indicates if this package is a continuation of the last. Ignore it for now.
+		//TODO catch this as an error and exit
+
+		if (dataLength != (bytesRemaining + 4)) // Compensate for 4 header bytes
+		{
+			if (_printDebug == true)
+			{
+				_debugPort->print(F("getData: expected dataLength: "));
+				_debugPort->print(bytesRemaining);
+				_debugPort->print(F(" got: "));
+				_debugPort->println(dataLength);
+			}
+			//return (false); //Error
+		}
+
+		if (channelNumber != 255)// For backward compatibility channelNumber defaults to 255
+		{
+			if (thisChannelNumber != channelNumber)
+			{
+				if (_printDebug == true)
+				{
+					_debugPort->print(F("getData: unexpected channelNumber: "));
+					_debugPort->println(channelNumber);
+				}
+				//return (false); //Error
+			}
+			if (thisSequenceNumber != expectedSequenceNumber)
+			{
+				if (_printDebug == true)
+				{
+					_debugPort->print(F("getData: unexpected sequenceNumber: "));
+					_debugPort->println(sequenceNumber);
+				}
+				//return (false); //Error
+			}
+		}
 
 		for (uint8_t x = 0; x < numberOfBytesToRead; x++)
 		{
@@ -1487,6 +1559,7 @@ boolean BNO080::getData(uint16_t bytesRemaining)
 			}
 		}
 
+		expectedSequenceNumber++;
 		bytesRemaining -= numberOfBytesToRead;
 	}
 	return (true); //Done!

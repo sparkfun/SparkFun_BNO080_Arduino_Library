@@ -137,10 +137,10 @@ public:
 
 	float qToFloat(int16_t fixedPointValue, uint8_t qPoint); //Given a Q value, converts fixed point floating to regular floating point number
 
-	boolean waitForI2C(); //Delay based polling for I2C traffic
+	boolean waitForI2C(size_t expectedLength = 1); //Delay based polling for I2C traffic
 	boolean waitForSPI(); //Delay based polling for INT pin to go low
 	boolean receivePacket(void);
-	boolean getData(uint16_t bytesRemaining); //Given a number of bytes, send the requests in I2C_BUFFER_LENGTH chunks
+	boolean getData(uint16_t bytesRemaining, uint8_t channelNumber = 255, uint8_t sequenceNumber = 255); //Given a number of bytes, send the requests in I2C_BUFFER_LENGTH chunks
 	boolean sendPacket(uint8_t channelNumber, uint8_t dataLength);
 	void printPacket(void); //Prints the current shtp header and data packets
 	void printHeader(void); //Prints the current shtp header (only)
