@@ -955,7 +955,7 @@ void BNO080::softReset(void)
 	sendPacket(CHANNEL_EXECUTABLE, 1); //Transmit packet on channel 1, 1 byte
 
 	//Read all incoming data and flush it
-	delay(50);
+	delay(150); // 50-100 is unreliable. 150 seems to work just fine.
 
 	if (_printDebug == true)
 		_debugPort->println(F("softReset: first receivePacket"));
