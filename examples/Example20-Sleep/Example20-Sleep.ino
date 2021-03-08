@@ -26,6 +26,9 @@
 #include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 BNO080 myIMU;
 
+unsigned long lastMillis = 0; // Keep track of time
+bool lastPowerState = true; // Toggle between "On" and "Sleep"
+
 void setup()
 {
   Serial.begin(115200);
@@ -44,46 +47,51 @@ void setup()
 //  Wire.setClockStretchLimit(4000);
 //  //=================================
 
+  //myIMU.enableDebugging(); // Uncomment this line to enable helpful debug messages on Serial
+
   if (myIMU.begin() == false)
   {
     Serial.println("BNO080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
     while (1);
   }
 
-  Wire.setClock(400000); //Increase I2C data rate to 400kHz
+  // Enable the Rotation Vector packet ** while the I2C bus is set to 100kHz **
+  myIMU.enableRotationVector(50); //Send RV data update every 50ms
 
-  myIMU.enableRotationVector(50); //Send data update every 50ms
+  Wire.setClock(400000); //Now increase I2C data rate to 400kHz
 
   Serial.println(F("Rotation vector enabled"));
   Serial.println(F("Output in form i, j, k, real, accuracy"));
-}
 
-unsigned long lastMillis = 0; // Keep track of time
-bool lastPowerState = true; // Toggle between "On" and "Sleep"
+  lastMillis = millis(); // Keep track of time
+}
 
 void loop()
 {
-  //Look for reports from the IMU
-  if (myIMU.dataAvailable() == true)
+  //Look for reports from the IMU - ** but only when not asleep ** 
+  if (lastPowerState) // Are we "On"? (Comment this if you are interested in how it effects the sleep current)
   {
-    float quatI = myIMU.getQuatI();
-    float quatJ = myIMU.getQuatJ();
-    float quatK = myIMU.getQuatK();
-    float quatReal = myIMU.getQuatReal();
-    float quatRadianAccuracy = myIMU.getQuatRadianAccuracy();
-
-    Serial.print(quatI, 2);
-    Serial.print(F(","));
-    Serial.print(quatJ, 2);
-    Serial.print(F(","));
-    Serial.print(quatK, 2);
-    Serial.print(F(","));
-    Serial.print(quatReal, 2);
-    Serial.print(F(","));
-    Serial.print(quatRadianAccuracy, 2);
-    Serial.print(F(","));
-
-    Serial.println();
+    if (myIMU.dataAvailable() == true) // Is fresh data available?
+    {
+      float quatI = myIMU.getQuatI();
+      float quatJ = myIMU.getQuatJ();
+      float quatK = myIMU.getQuatK();
+      float quatReal = myIMU.getQuatReal();
+      float quatRadianAccuracy = myIMU.getQuatRadianAccuracy();
+  
+      Serial.print(quatI, 2);
+      Serial.print(F(","));
+      Serial.print(quatJ, 2);
+      Serial.print(F(","));
+      Serial.print(quatK, 2);
+      Serial.print(F(","));
+      Serial.print(quatReal, 2);
+      Serial.print(F(","));
+      Serial.print(quatRadianAccuracy, 2);
+      Serial.print(F(","));
+  
+      Serial.println();
+    }
   }
 
   //Check if it is time to change the power state
@@ -102,4 +110,6 @@ void loop()
 
     lastPowerState ^= 1; // Invert lastPowerState (using ex-or)
   }
+
+  delay(10); // Don't pound the bus too hard (Comment this if you are interested in how it effects the sleep current)
 }
