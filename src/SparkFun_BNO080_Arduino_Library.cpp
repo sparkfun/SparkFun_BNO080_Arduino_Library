@@ -1336,15 +1336,22 @@ void BNO080::saveCalibration()
 //This function _should_ be unnecessary but communication with the BNO080 stalls without it...
 boolean BNO080::waitForI2C(size_t expectedLength)
 {
+	size_t i2cAvailable;
+
 	for (uint8_t counter = 0; counter < 100; counter++) //Don't got more than 255
 	{
-		if (_i2cPort->available() >= expectedLength) // Greater than should be impossible...
+		i2cAvailable = _i2cPort->available();
+		if (i2cAvailable >= expectedLength) // Greater than should be impossible...
 			return (true);
 		delay(1);
 	}
 
 	if (_printDebug == true)
-		_debugPort->println(F("I2C timeout"));
+		_debugPort->print(F("waitForI2C: I2C timeout when expecting "));
+		_debugPort->print(expectedLength);
+		_debugPort->print(F(" bytes. "));
+		_debugPort->print(i2cAvailable);
+		_debugPort->println(F(" were available"));
 	return (false);
 }
 
@@ -1432,7 +1439,13 @@ boolean BNO080::receivePacket(void)
 		uint8_t packetMSB = _i2cPort->read();
 		uint8_t channelNumber = _i2cPort->read();
 		uint8_t sequenceNumber = _i2cPort->read(); //Not sure if we need to store this or not
-
+		// if (_printDebug == true)
+		// {
+		// 	_debugPort->print(F("receivePacket (I2C): packetLSB: 0x")); _debugPort->println(packetLSB, HEX);
+		// 	_debugPort->print(F("receivePacket (I2C): packetMSB: 0x")); _debugPort->println(packetMSB, HEX);
+		// 	_debugPort->print(F("receivePacket (I2C): channelNumber: 0x")); _debugPort->println(channelNumber, HEX);
+		// 	_debugPort->print(F("receivePacket (I2C): sequenceNumber: 0x")); _debugPort->println(sequenceNumber, HEX);
+		// }
 		//Store the header info.
 		shtpHeader[0] = packetLSB;
 		shtpHeader[1] = packetMSB;
@@ -1505,6 +1518,13 @@ boolean BNO080::getData(uint16_t bytesRemaining, uint8_t channelNumber, uint8_t 
 		uint8_t packetMSB = _i2cPort->read();
 		uint8_t thisChannelNumber = _i2cPort->read();
 		uint8_t thisSequenceNumber = _i2cPort->read();
+		// if (_printDebug == true)
+		// {
+		// 	_debugPort->print(F("getData: packetLSB: 0x")); _debugPort->println(packetLSB, HEX);
+		// 	_debugPort->print(F("getData: packetMSB: 0x")); _debugPort->println(packetMSB, HEX);
+		// 	_debugPort->print(F("getData: thisChannelNumber: 0x")); _debugPort->println(thisChannelNumber, HEX);
+		// 	_debugPort->print(F("getData: thisSequenceNumber: 0x")); _debugPort->println(thisSequenceNumber, HEX);
+		// }
 
 		//Calculate the number of data bytes in this packet
 		uint16_t dataLength = (((uint16_t)packetMSB) << 8) | ((uint16_t)packetLSB);
@@ -1549,6 +1569,13 @@ boolean BNO080::getData(uint16_t bytesRemaining, uint8_t channelNumber, uint8_t 
 		for (uint8_t x = 0; x < numberOfBytesToRead; x++)
 		{
 			uint8_t incoming = _i2cPort->read();
+			// if (_printDebug == true)
+			// {
+			// 	_debugPort->print(F("getData: dataSpot: "));
+			// 	_debugPort->print(dataSpot);
+			// 	_debugPort->print(F(" incoming: 0x"));
+			// 	_debugPort->println(incoming, HEX);
+			// }
 			if (dataSpot < MAX_PACKET_SIZE)
 			{
 				shtpData[dataSpot++] = incoming; //Store data into the shtpData array
