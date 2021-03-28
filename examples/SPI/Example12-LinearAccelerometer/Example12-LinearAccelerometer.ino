@@ -11,10 +11,24 @@
 
   This example shows how to output accelerometer values
 
+  Hardware modifications:
+  The PS1 jumper must be closed.
+  The PS0 jumper must be open. PS0/WAKE is connected and the WAK pin is used to bring the IC out of sleep.
+  The I2C pull up jumper must be cleared/open.
+  The ADR jumper must be cleared/open. 
+
   Hardware Connections:
-  Attach the Qwiic Shield to your Arduino/Photon/ESP32 or other
-  Plug the sensor onto the shield
-  Serial.print it out at 115200 baud to serial monitor.
+  Don't hook the BNO080 to a normal 5V Uno! Either use the Qwiic system or use a
+  microcontroller that runs at 3.3V.
+  Arduino 13 = BNO080 SCK
+  12 = SO
+  11 = SI
+  10 = !CS
+  9 = WAK
+  8 = !INT
+  7 = !RST
+  3.3V = 3V3
+  GND = GND
 */
 
 #include <Wire.h>
