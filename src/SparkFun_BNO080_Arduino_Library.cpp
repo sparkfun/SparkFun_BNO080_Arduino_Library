@@ -1383,11 +1383,13 @@ boolean BNO080::waitForI2C(size_t expectedLength)
 	}
 
 	if (_printDebug == true)
+	{
 		_debugPort->print(F("waitForI2C: I2C timeout when expecting "));
 		_debugPort->print(expectedLength);
 		_debugPort->print(F(" bytes. "));
 		_debugPort->print(i2cAvailable);
 		_debugPort->println(F(" were available"));
+	}
 	return (false);
 }
 
