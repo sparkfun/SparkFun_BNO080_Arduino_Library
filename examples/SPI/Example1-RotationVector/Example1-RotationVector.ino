@@ -18,9 +18,10 @@
   https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
 
   Hardware modifications:
-  The PS1 jumper must be closed
+  The PS1 jumper must be closed.
   The PS0 jumper must be open. PS0/WAKE is connected and the WAK pin is used to bring the IC out of sleep.
-  The I2C pull up jumper must be cleared/open
+  The I2C pull up jumper must be cleared/open.
+  The ADR jumper must be cleared/open. 
 
   Hardware Connections:
   Don't hook the BNO080 to a normal 5V Uno! Either use the Qwiic system or use a
