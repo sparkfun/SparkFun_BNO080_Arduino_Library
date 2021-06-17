@@ -34,7 +34,7 @@ void setup()
   Wire1.begin();
 
   //The first argument is the I2C address of the sensor, either 0x4B (default) or 0x4A
-  //The second is the I2C port to use. Wire, Wire1, softWire, etc.
+  //The second is the TwoWire I2C port to use. Wire, Wire1, etc.
   myIMU.begin(0x4A, Wire1);
 
   Wire1.setClock(400000); //Increase I2C data rate to 400kHz
