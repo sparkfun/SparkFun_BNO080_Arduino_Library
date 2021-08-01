@@ -19,6 +19,7 @@ enableDebugging	KEYWORD2
 
 softReset	KEYWORD2
 resetReason	KEYWORD2
+hasReset    KEYWORD2
 modeOn	KEYWORD2
 modeSleep	KEYWORD2
 

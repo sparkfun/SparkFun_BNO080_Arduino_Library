@@ -100,6 +100,9 @@ const byte CHANNEL_GYRO = 5;
 #define FRS_RECORDID_MAGNETIC_FIELD_CALIBRATED 0xE309
 #define FRS_RECORDID_ROTATION_VECTOR 0xE30B
 
+// Reset complete packet (BNO08X Datasheet p.24 Figure 1-27)
+#define EXECUTABLE_RESET_COMPLETE 0x1
+
 //Command IDs from section 6.4, page 42
 //These are used to calibrate, initialize, set orientation, tare etc the sensor
 #define COMMAND_ERRORS 1
@@ -131,6 +134,7 @@ public:
 	void enableDebugging(Stream &debugPort = Serial); //Turn on debug printing. If user doesn't specify then Serial will be used.
 
 	void softReset();	  //Try to reset the IMU via software
+	bool hasReset(); //Returns true if the sensor has reported a reset. Reading this will unflag the reset.
 	uint8_t resetReason(); //Query the IMU for the reason it last reset
 	void modeOn();	  //Use the executable channel to turn the BNO on
 	void modeSleep();	  //Use the executable channel to put the BNO to sleep
@@ -272,6 +276,8 @@ private:
 	uint8_t _wake;
 	uint8_t _int;
 	uint8_t _rst;
+
+	bool _hasReset = false;		// Keeps track of any Reset Complete packets we receive. 
 
 	//These are the raw sensor values (without Q applied) pulled from the user requested Input Report
 	uint16_t rawAccelX, rawAccelY, rawAccelZ, accelAccuracy;

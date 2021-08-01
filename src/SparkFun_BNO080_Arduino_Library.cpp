@@ -999,6 +999,16 @@ void BNO080::modeSleep(void)
 		; //delay(1);
 }
 
+// Indicates if we've received a Reset Complete packet. Once it's been read, 
+// the state will reset to false until another Reset Complete packet is found. 
+bool BNO080::hasReset() {
+	if (_hasReset) {
+		_hasReset = false;
+		return true;
+	}
+	return false; 
+}
+
 //Get the reason for the last reset
 //1 = POR, 2 = Internal reset, 3 = Watchdog, 4 = External reset, 5 = Other
 uint8_t BNO080::resetReason()
@@ -1446,6 +1456,15 @@ boolean BNO080::receivePacket(void)
 
 		getData(dataLength);
 	}
+
+	// Quickly check for reset complete packet. No need for a seperate parser.
+	// This function is also called after soft reset, so we need to catch this
+	// packet here otherwise we need to check for the reset packet in multiple
+	// places.
+	if (shtpHeader[2] == CHANNEL_EXECUTABLE && shtpData[0] == EXECUTABLE_RESET_COMPLETE) 
+	{
+		_hasReset = true;
+	} 
 
 	return (true); //We're done!
 }
