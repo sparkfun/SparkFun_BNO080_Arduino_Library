@@ -504,6 +504,18 @@ void BNO080::getQuat(float &i, float &j, float &k, float &real, float &radAccura
 float BNO080::getQuatI()
 {
 	float quat = qToFloat(rawQuatI, rotationVector_Q1);
+	if (_printDebug == true)
+	{
+		if ((quat < -1.0) || (quat > 1.0))
+		{
+			_debugPort->print(F("getQuatI: quat: ")); // Debug the occasional non-unitary Quat
+			_debugPort->print(quat, 2);
+			_debugPort->print(F(" rawQuatI: "));
+			_debugPort->print(rawQuatI);
+			_debugPort->print(F(" rotationVector_Q1: "));
+			_debugPort->println(rotationVector_Q1);
+		}
+	}
 	return (quat);
 }
 
@@ -511,6 +523,18 @@ float BNO080::getQuatI()
 float BNO080::getQuatJ()
 {
 	float quat = qToFloat(rawQuatJ, rotationVector_Q1);
+	if (_printDebug == true)
+	{
+		if ((quat < -1.0) || (quat > 1.0)) // Debug the occasional non-unitary Quat
+		{
+			_debugPort->print(F("getQuatJ: quat: "));
+			_debugPort->print(quat, 2);
+			_debugPort->print(F(" rawQuatJ: "));
+			_debugPort->print(rawQuatJ);
+			_debugPort->print(F(" rotationVector_Q1: "));
+			_debugPort->println(rotationVector_Q1);
+		}
+	}
 	return (quat);
 }
 
@@ -518,6 +542,18 @@ float BNO080::getQuatJ()
 float BNO080::getQuatK()
 {
 	float quat = qToFloat(rawQuatK, rotationVector_Q1);
+	if (_printDebug == true)
+	{
+		if ((quat < -1.0) || (quat > 1.0)) // Debug the occasional non-unitary Quat
+		{
+			_debugPort->print(F("getQuatK: quat: "));
+			_debugPort->print(quat, 2);
+			_debugPort->print(F(" rawQuatK: "));
+			_debugPort->print(rawQuatK);
+			_debugPort->print(F(" rotationVector_Q1: "));
+			_debugPort->println(rotationVector_Q1);
+		}
+	}
 	return (quat);
 }
 
@@ -999,6 +1035,16 @@ void BNO080::modeSleep(void)
 		; //delay(1);
 }
 
+// Indicates if we've received a Reset Complete packet. Once it's been read, 
+// the state will reset to false until another Reset Complete packet is found. 
+bool BNO080::hasReset() {
+	if (_hasReset) {
+		_hasReset = false;
+		return true;
+	}
+	return false; 
+}
+
 //Get the reason for the last reset
 //1 = POR, 2 = Internal reset, 3 = Watchdog, 4 = External reset, 5 = Other
 uint8_t BNO080::resetReason()
@@ -1446,6 +1492,15 @@ boolean BNO080::receivePacket(void)
 
 		getData(dataLength);
 	}
+
+	// Quickly check for reset complete packet. No need for a seperate parser.
+	// This function is also called after soft reset, so we need to catch this
+	// packet here otherwise we need to check for the reset packet in multiple
+	// places.
+	if (shtpHeader[2] == CHANNEL_EXECUTABLE && shtpData[0] == EXECUTABLE_RESET_COMPLETE) 
+	{
+		_hasReset = true;
+	} 
 
 	return (true); //We're done!
 }
