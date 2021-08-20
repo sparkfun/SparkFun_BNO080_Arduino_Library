@@ -15,8 +15,8 @@
 
 #include "SparkFun_BNO080_Arduino_Library.h" // Click here to get the library: http://librarymanager/All#SparkFun_BNO080
 
-#define BNO08X_ADDR 0x4A
-//#define BNO08X_ADDR 0x4B
+#define BNO08X_ADDR 0x4B // SparkFun BNO080 Breakout (Qwiic) defaults to 0x4B
+//#define BNO08X_ADDR 0x4A // Alternate address if ADR jumper is closed
 
 BNO080 myIMU;
 
@@ -53,7 +53,8 @@ void loop()
   // Check resetReason() for the difference between different resets.
   if (myIMU.hasReset()) {
       Serial.println(" ------------------ BNO085 has reset. ------------------ ");
-      Serial.printf(" Reason: %i\n",myIMU.resetReason());
+      Serial.print(F(" Reason: "));
+      Serial.println(myIMU.resetReason());
       enableReports(); // We'll need to re-enable reports after any reset.
   }
 
@@ -61,7 +62,11 @@ void loop()
   if (myIMU.dataAvailable())
   {
     cyclecount++;
-    Serial.printf("[%2i] ",cyclecount);
+
+    Serial.print(F("["));
+    if (cyclecount < 10) Serial.print(F("0"));
+    Serial.print(cyclecount);
+    Serial.print(F("] "));
 
     float x = myIMU.getGyroX();
     float y = myIMU.getGyroY();
