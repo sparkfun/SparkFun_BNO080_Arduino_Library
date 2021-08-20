@@ -23,6 +23,8 @@ Thanks to all those who have helped improve the library:
 * Filimindji for AR/VR Stabilized RotationVector and AR/VR Stabilized GameRotationVector support - [PR 46](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/46)
 * ya-mouse for the getreadings improvements - [PR 55](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/55)
 * Guillaume for the read-multiple-values helper functions and the interrupt example - [PR56](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/56) & [PR59](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/59)
+* aedancullen for the tap detector - [PR 64](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/64)
+* mattbradford83 for the hasReset code and example - [PR 92](https://github.com/sparkfun/SparkFun_BNO080_Arduino_Library/pull/92)
 
 Repository Contents
 -------------------
