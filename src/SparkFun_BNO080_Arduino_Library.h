@@ -80,6 +80,7 @@ const byte CHANNEL_GYRO = 5;
 #define SENSOR_REPORTID_LINEAR_ACCELERATION 0x04
 #define SENSOR_REPORTID_ROTATION_VECTOR 0x05
 #define SENSOR_REPORTID_GRAVITY 0x06
+#define SENSOR_REPORTID_UNCALIBRATED_GYRO 0x07
 #define SENSOR_REPORTID_GAME_ROTATION_VECTOR 0x08
 #define SENSOR_REPORTID_GEOMAGNETIC_ROTATION_VECTOR 0x09
 #define SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR 0x2A
@@ -156,6 +157,7 @@ public:
 	void enableAccelerometer(uint16_t timeBetweenReports);
 	void enableLinearAccelerometer(uint16_t timeBetweenReports);
 	void enableGyro(uint16_t timeBetweenReports);
+	void enableUncalibratedGyro(uint16_t timeBetweenReports);
 	void enableMagnetometer(uint16_t timeBetweenReports);
 	void enableTapDetector(uint16_t timeBetweenReports);
 	void enableStepCounter(uint16_t timeBetweenReports);
@@ -196,6 +198,16 @@ public:
 	float getGyroY();
 	float getGyroZ();
 	uint8_t getGyroAccuracy();
+
+	void getUncalibratedGyro(float &x, float &y, float &z, float &bx, float &by, float &bz, uint8_t &accuracy);
+	float getUncalibratedGyroX();
+	float getUncalibratedGyroY();
+	float getUncalibratedGyroZ();
+	float getUncalibratedGyroBiasX();
+	float getUncalibratedGyroBiasY();
+	float getUncalibratedGyroBiasZ();
+	uint8_t getUncalibratedGyroAccuracy();
+
 
 	void getFastGyro(float &x, float &y, float &z);
 	float getFastGyroX();
@@ -283,6 +295,7 @@ private:
 	uint16_t rawAccelX, rawAccelY, rawAccelZ, accelAccuracy;
 	uint16_t rawLinAccelX, rawLinAccelY, rawLinAccelZ, accelLinAccuracy;
 	uint16_t rawGyroX, rawGyroY, rawGyroZ, gyroAccuracy;
+	uint16_t rawUncalibGyroX, rawUncalibGyroY, rawUncalibGyroZ, rawBiasX, rawBiasY, rawBiasZ, UncalibGyroAccuracy;
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
 	uint16_t rawFastGyroX, rawFastGyroY, rawFastGyroZ;
