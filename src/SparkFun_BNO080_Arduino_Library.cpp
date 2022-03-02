@@ -1221,6 +1221,21 @@ boolean BNO080::calibrationComplete()
 	return (false);
 }
 
+void BNO080::tareNow(bool zAxis, uint8_t rotationVectorBasis)
+{
+	sendTareCommand(TARE_NOW, zAxis ? TARE_AXIS_Z : TARE_AXIS_ALL, rotationVectorBasis);
+}
+
+void BNO080::saveTare()
+{
+	sendTareCommand(TARE_PERSIST);
+}
+
+void BNO080::clearTare()
+{
+	sendTareCommand(TARE_SET_REORIENTATION);
+}
+
 //Given a sensor's report ID, this tells the BNO080 to begin reporting the values
 void BNO080::setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports)
 {
@@ -1318,6 +1333,23 @@ void BNO080::sendCalibrateCommand(uint8_t thingToCalibrate)
 
 	//Using this shtpData packet, send a command
 	sendCommand(COMMAND_ME_CALIBRATE);
+}
+
+void BNO080::sendTareCommand(uint8_t command, uint8_t axis, uint8_t rotationVectorBasis)
+{
+	for (uint8_t x = 3; x < 12; x++) //Clear this section of the shtpData array
+		shtpData[x] = 0;
+
+	shtpData[3] = command;
+	
+	if (command == TARE_NOW)
+	{
+		shtpData[4] = axis; // axis setting
+		shtpData[5] = rotationVectorBasis; // rotation vector
+	}
+	
+	//Using this shtpData packet, send a command
+	sendCommand(COMMAND_TARE);
 }
 
 //Request ME Calibration Status from BNO080

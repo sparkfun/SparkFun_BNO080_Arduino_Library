@@ -122,6 +122,20 @@ const byte CHANNEL_GYRO = 5;
 #define CALIBRATE_ACCEL_GYRO_MAG 4
 #define CALIBRATE_STOP 5
 
+#define TARE_NOW 0
+#define TARE_PERSIST 1
+#define TARE_SET_REORIENTATION 2
+
+#define TARE_AXIS_ALL 0x07
+#define TARE_AXIS_Z   0x04
+
+#define TARE_ROTATION_VECTOR 0
+#define TARE_GAME_ROTATION_VECTOR 1
+#define TARE_GEOMAGNETIC_ROTATION_VECTOR 2
+#define TARE_GYRO_INTEGRATED_ROTATION_VECTOR 3
+#define TARE_AR_VR_STABILIZED_ROTATION_VECTOR 4
+#define TARE_AR_VR_STABILIZED_GAME_ROTATION_VECTOR 5
+
 #define MAX_PACKET_SIZE 128 //Packets can be up to 32k but we don't have that much RAM.
 #define MAX_METADATA_SIZE 9 //This is in words. There can be many but we mostly only care about the first 9 (Qs, range, etc)
 
@@ -218,6 +232,10 @@ public:
 	void requestCalibrationStatus(); //Sends command to get status
 	boolean calibrationComplete();   //Checks ME Cal response for byte 5, R0 - Status
 
+	void tareNow(bool zAxis=false, uint8_t rotationVectorBasis=TARE_ROTATION_VECTOR);
+	void saveTare();
+	void clearTare();
+	
 	uint8_t getTapDetector();
 	uint32_t getTimeStamp();
 	uint16_t getStepCount();
@@ -244,6 +262,7 @@ public:
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports, uint32_t specificConfig);
 	void sendCommand(uint8_t command);
 	void sendCalibrateCommand(uint8_t thingToCalibrate);
+	void sendTareCommand(uint8_t command, uint8_t axis=TARE_AXIS_ALL, uint8_t rotationVectorBasis=TARE_ROTATION_VECTOR);
 
 	//Metadata functions
 	int16_t getQ1(uint16_t recordID);
