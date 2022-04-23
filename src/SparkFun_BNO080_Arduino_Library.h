@@ -240,6 +240,9 @@ public:
 	float getPitch();
 	float getYaw();
 
+	void BNO080::tareAllAxes();
+	void BNO080::saveTare();
+
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports);
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports, uint32_t specificConfig);
 	void sendCommand(uint8_t command);

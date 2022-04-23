@@ -1221,6 +1221,53 @@ boolean BNO080::calibrationComplete()
 	return (false);
 }
 
+
+//See Tare Procedure Tare Function Usage Guide
+//https://www.ceva-dsp.com/wp-content/uploads/2019/09/BNO080-BNO085-Tare-Function-Usage-Guide.pdf
+void BNO080::tareAllAxes()
+{
+	/*shtpData[3] = 0; //P0 - P0 (Subcommand)
+	shtpData[4] = 0; //P1 - All 3 Axes(x,y,z)
+	shtpData[5] = 0; //P2 - Rotation vector
+	shtpData[6] = 0; //P3 - Reserved
+	shtpData[7] = 0; //P4 - Reserved
+	shtpData[8] = 0; //P5 - Reserved
+	shtpData[9] = 0; //P6 - Reserved
+	shtpData[10] = 0; //P7 - Reserved
+	shtpData[11] = 0; //P8 - Reserved*/
+
+	for (uint8_t x = 3; x < 12; x++) //Clear this section of the shtpData array
+		shtpData[x] = 0;
+	
+	shtpData[4] = 0x07;
+
+	//Using this shtpData packet, send a command
+	sendCommand(COMMAND_TARE); //Save TARE command
+}
+
+//See Tare Procedure Tare Function Usage Guide
+//Run the Persist Tare
+//https://www.ceva-dsp.com/wp-content/uploads/2019/09/BNO080-BNO085-Tare-Function-Usage-Guide.pdf
+void BNO080::saveTare()
+{
+	/*shtpData[3] = 0; //P0 (Subcommand)
+	shtpData[4] = 0; //Reserved
+	shtpData[5] = 0; //Reserved
+	shtpData[6] = 0; //P3 - Reserved
+	shtpData[7] = 0; //P4 - Reserved
+	shtpData[8] = 0; //P5 - Reserved
+	shtpData[9] = 0; //P6 - Reserved
+	shtpData[10] = 0; //P7 - Reserved
+	shtpData[11] = 0; //P8 - Reserved*/
+	
+	for (uint8_t x = 3; x < 12; x++) //Clear this section of the shtpData array
+		shtpData[x] = 0;
+	
+	shtpData[3] = 0x01;
+	
+	sendCommand(COMMAND_TARE); //Run TARE command
+}
+
 //Given a sensor's report ID, this tells the BNO080 to begin reporting the values
 void BNO080::setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports)
 {
