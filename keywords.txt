@@ -39,6 +39,8 @@ enableARVRStabilizedRotationVector	KEYWORD2
 enableARVRStabilizedGameRotationVector	KEYWORD2
 enableAccelerometer	KEYWORD2
 enableGyro	KEYWORD2
+enableUncalibratedGyro	KEYWORD2
+enableGravity KEYWORD2
 enableMagnetometer	KEYWORD2
 enableTapDetector	KEYWORD2
 enableStepCounter	KEYWORD2
@@ -75,6 +77,21 @@ getGyroY	KEYWORD2
 getGyroZ	KEYWORD2
 getGyroAccuracy	KEYWORD2
 
+getUncalibratedGyro	KEYWORD2
+getUncalibratedGyroX	KEYWORD2
+getUncalibratedGyroY	KEYWORD2
+getUncalibratedGyroZ	KEYWORD2
+getUncalibratedGyroAccuracy	KEYWORD2
+getUncalibratedGyroBiasX	KEYWORD2
+getUncalibratedGyroBiasY	KEYWORD2
+getUncalibratedGyroBiasZ	KEYWORD2
+
+getGravity KEYWORD2
+getGravityX KEYWORD2
+getGravityY KEYWORD2
+getGravityZ KEYWORD2
+getGravityAccuracy KEYWORD2
+
 getFastGyro	KEYWORD2
 getFastGyroX	KEYWORD2
 getFastGyroY	KEYWORD2
@@ -101,6 +118,11 @@ endCalibration	KEYWORD2
 saveCalibration	KEYWORD2
 requestCalibrationStatus	KEYWORD2
 calibrationComplete	KEYWORD2
+
+tareNow	KEYWORD2
+saveTare	KEYWORD2
+clearTare	KEYWORD2
+sendTareCommand	KEYWORD2
 
 getTapDetector	KEYWORD2
 getTimeStamp	KEYWORD2

@@ -80,6 +80,7 @@ const byte CHANNEL_GYRO = 5;
 #define SENSOR_REPORTID_LINEAR_ACCELERATION 0x04
 #define SENSOR_REPORTID_ROTATION_VECTOR 0x05
 #define SENSOR_REPORTID_GRAVITY 0x06
+#define SENSOR_REPORTID_UNCALIBRATED_GYRO 0x07
 #define SENSOR_REPORTID_GAME_ROTATION_VECTOR 0x08
 #define SENSOR_REPORTID_GEOMAGNETIC_ROTATION_VECTOR 0x09
 #define SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR 0x2A
@@ -122,6 +123,20 @@ const byte CHANNEL_GYRO = 5;
 #define CALIBRATE_ACCEL_GYRO_MAG 4
 #define CALIBRATE_STOP 5
 
+#define TARE_NOW 0
+#define TARE_PERSIST 1
+#define TARE_SET_REORIENTATION 2
+
+#define TARE_AXIS_ALL 0x07
+#define TARE_AXIS_Z   0x04
+
+#define TARE_ROTATION_VECTOR 0
+#define TARE_GAME_ROTATION_VECTOR 1
+#define TARE_GEOMAGNETIC_ROTATION_VECTOR 2
+#define TARE_GYRO_INTEGRATED_ROTATION_VECTOR 3
+#define TARE_AR_VR_STABILIZED_ROTATION_VECTOR 4
+#define TARE_AR_VR_STABILIZED_GAME_ROTATION_VECTOR 5
+
 #define MAX_PACKET_SIZE 128 //Packets can be up to 32k but we don't have that much RAM.
 #define MAX_METADATA_SIZE 9 //This is in words. There can be many but we mostly only care about the first 9 (Qs, range, etc)
 
@@ -155,7 +170,9 @@ public:
 	void enableARVRStabilizedGameRotationVector(uint16_t timeBetweenReports);
 	void enableAccelerometer(uint16_t timeBetweenReports);
 	void enableLinearAccelerometer(uint16_t timeBetweenReports);
+	void enableGravity(uint16_t timeBetweenReports);
 	void enableGyro(uint16_t timeBetweenReports);
+	void enableUncalibratedGyro(uint16_t timeBetweenReports);
 	void enableMagnetometer(uint16_t timeBetweenReports);
 	void enableTapDetector(uint16_t timeBetweenReports);
 	void enableStepCounter(uint16_t timeBetweenReports);
@@ -197,6 +214,16 @@ public:
 	float getGyroZ();
 	uint8_t getGyroAccuracy();
 
+	void getUncalibratedGyro(float &x, float &y, float &z, float &bx, float &by, float &bz, uint8_t &accuracy);
+	float getUncalibratedGyroX();
+	float getUncalibratedGyroY();
+	float getUncalibratedGyroZ();
+	float getUncalibratedGyroBiasX();
+	float getUncalibratedGyroBiasY();
+	float getUncalibratedGyroBiasZ();
+	uint8_t getUncalibratedGyroAccuracy();
+
+
 	void getFastGyro(float &x, float &y, float &z);
 	float getFastGyroX();
 	float getFastGyroY();
@@ -208,6 +235,12 @@ public:
 	float getMagZ();
 	uint8_t getMagAccuracy();
 
+	void getGravity(float &x, float &y, float &z, uint8_t &accuracy);
+	float getGravityX();
+	float getGravityY();
+	float getGravityZ();
+	uint8_t getGravityAccuracy();
+
 	void calibrateAccelerometer();
 	void calibrateGyro();
 	void calibrateMagnetometer();
@@ -218,6 +251,10 @@ public:
 	void requestCalibrationStatus(); //Sends command to get status
 	boolean calibrationComplete();   //Checks ME Cal response for byte 5, R0 - Status
 
+	void tareNow(bool zAxis=false, uint8_t rotationVectorBasis=TARE_ROTATION_VECTOR);
+	void saveTare();
+	void clearTare();
+	
 	uint8_t getTapDetector();
 	uint32_t getTimeStamp();
 	uint16_t getStepCount();
@@ -244,6 +281,7 @@ public:
 	void setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports, uint32_t specificConfig);
 	void sendCommand(uint8_t command);
 	void sendCalibrateCommand(uint8_t thingToCalibrate);
+	void sendTareCommand(uint8_t command, uint8_t axis=TARE_AXIS_ALL, uint8_t rotationVectorBasis=TARE_ROTATION_VECTOR);
 
 	//Metadata functions
 	int16_t getQ1(uint16_t recordID);
@@ -283,9 +321,11 @@ private:
 	uint16_t rawAccelX, rawAccelY, rawAccelZ, accelAccuracy;
 	uint16_t rawLinAccelX, rawLinAccelY, rawLinAccelZ, accelLinAccuracy;
 	uint16_t rawGyroX, rawGyroY, rawGyroZ, gyroAccuracy;
+	uint16_t rawUncalibGyroX, rawUncalibGyroY, rawUncalibGyroZ, rawBiasX, rawBiasY, rawBiasZ, UncalibGyroAccuracy;
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
 	uint16_t rawFastGyroX, rawFastGyroY, rawFastGyroZ;
+	uint16_t gravityX, gravityY, gravityZ, gravityAccuracy;
 	uint8_t tapDetector;
 	uint16_t stepCount;
 	uint32_t timeStamp;
@@ -306,4 +346,5 @@ private:
 	int16_t gyro_Q1 = 9;
 	int16_t magnetometer_Q1 = 4;
 	int16_t angular_velocity_Q1 = 10;
+	int16_t gravity_Q1 = 8;
 };
