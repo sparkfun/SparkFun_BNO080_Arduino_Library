@@ -401,6 +401,13 @@ uint16_t BNO080::parseInputReport(void)
 			calibrationStatus = shtpData[5 + 5]; //R0 - Status (0 = success, non-zero = fail)
 		}
 	}
+	else if(shtpData[5] == SENSOR_REPORTID_GRAVITY)
+	{
+		gravityAccuracy = status;
+		gravityX = data1;
+		gravityY = data2;
+		gravityZ = data3;
+	}
 	else
 	{
 		//This sensor report ID is unhandled.
@@ -688,6 +695,41 @@ float BNO080::getGyroZ()
 uint8_t BNO080::getGyroAccuracy()
 {
 	return (gyroAccuracy);
+}
+
+//Gets the full gravity vector
+//x,y,z output floats
+void BNO080::getGravity(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(gravityX, gravity_Q1);
+	y = qToFloat(gravityX, gravity_Q1);
+	z = qToFloat(gravityX, gravity_Q1);
+	accuracy = gravityAccuracy;
+}
+
+float BNO080::getGravityX()
+{
+	float x = qToFloat(gravityX, gravity_Q1);
+	return x;
+}
+
+//Return the gravity component
+float BNO080::getGravityY()
+{
+	float y = qToFloat(gravityY, gravity_Q1);
+	return y;
+}
+
+//Return the gravity component
+float BNO080::getGravityZ()
+{
+	float z = qToFloat(gravityZ, gravity_Q1);
+	return z;
+}
+
+uint8_t BNO080::getGravityAccuracy()
+{
+	return (gravityAccuracy);
 }
 
 //Gets the full mag vector
@@ -1110,6 +1152,12 @@ void BNO080::enableAccelerometer(uint16_t timeBetweenReports)
 void BNO080::enableLinearAccelerometer(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_LINEAR_ACCELERATION, timeBetweenReports);
+}
+
+//Sends the packet to enable the gravity vector
+void BNO080::enableGravity(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_GRAVITY, timeBetweenReports);
 }
 
 //Sends the packet to enable the gyro

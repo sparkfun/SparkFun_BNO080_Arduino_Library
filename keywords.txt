@@ -39,6 +39,7 @@ enableARVRStabilizedRotationVector	KEYWORD2
 enableARVRStabilizedGameRotationVector	KEYWORD2
 enableAccelerometer	KEYWORD2
 enableGyro	KEYWORD2
+enableGravity KEYWORD2
 enableMagnetometer	KEYWORD2
 enableTapDetector	KEYWORD2
 enableStepCounter	KEYWORD2
@@ -74,6 +75,12 @@ getGyroX	KEYWORD2
 getGyroY	KEYWORD2
 getGyroZ	KEYWORD2
 getGyroAccuracy	KEYWORD2
+
+getGravity KEYWORD2
+getGravityX KEYWORD2
+getGravityY KEYWORD2
+getGravityZ KEYWORD2
+getGravityAccuracy KEYWORD2
 
 getFastGyro	KEYWORD2
 getFastGyroX	KEYWORD2
