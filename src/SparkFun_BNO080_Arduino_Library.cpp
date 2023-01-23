@@ -291,6 +291,7 @@ uint16_t BNO080::parseInputReport(void)
 	uint16_t data3 = (uint16_t)shtpData[5 + 9] << 8 | shtpData[5 + 8];
 	uint16_t data4 = 0;
 	uint16_t data5 = 0; //We would need to change this to uin32_t to capture time stamp value on Raw Accel/Gyro/Mag reports
+	uint16_t data6 = 0;
 
 	if (dataLength - 5 > 9)
 	{
@@ -300,6 +301,11 @@ uint16_t BNO080::parseInputReport(void)
 	{
 		data5 = (uint16_t)shtpData[5 + 13] << 8 | shtpData[5 + 12];
 	}
+	if (dataLength - 5 > 13)
+	{
+		data6 = (uint16_t)shtpData[5 + 15] << 8 | shtpData[5 + 14];
+	}
+
 
 	//Store these generic values to their proper global variable
 	if (shtpData[5] == SENSOR_REPORTID_ACCELEROMETER)
@@ -317,11 +323,21 @@ uint16_t BNO080::parseInputReport(void)
 		rawLinAccelZ = data3;
 	}
 	else if (shtpData[5] == SENSOR_REPORTID_GYROSCOPE)
-	{
+	{	
 		gyroAccuracy = status;
 		rawGyroX = data1;
 		rawGyroY = data2;
 		rawGyroZ = data3;
+	}
+	else if (shtpData[5] == SENSOR_REPORTID_UNCALIBRATED_GYRO)
+	{
+		UncalibGyroAccuracy = status;
+		rawUncalibGyroX = data1;
+		rawUncalibGyroY = data2;
+		rawUncalibGyroZ = data3;
+		rawBiasX  = data4;
+		rawBiasY  = data5;
+		rawBiasZ  = data6;
 	}
 	else if (shtpData[5] == SENSOR_REPORTID_MAGNETIC_FIELD)
 	{
@@ -695,6 +711,61 @@ float BNO080::getGyroZ()
 uint8_t BNO080::getGyroAccuracy()
 {
 	return (gyroAccuracy);
+}
+
+//Gets the full uncalibrated gyro vector
+//x,y,z,bx,by,bz output floats
+void BNO080::getUncalibratedGyro(float &x, float &y, float &z, float &bx, float &by, float &bz, uint8_t &accuracy)
+{
+	x = qToFloat(rawUncalibGyroX, gyro_Q1);
+	y = qToFloat(rawUncalibGyroY, gyro_Q1);
+	z = qToFloat(rawUncalibGyroZ, gyro_Q1);
+	bx = qToFloat(rawBiasX, gyro_Q1);
+	by = qToFloat(rawBiasY, gyro_Q1);
+	bz = qToFloat(rawBiasZ, gyro_Q1);
+	accuracy = UncalibGyroAccuracy;
+}
+//Return the gyro component
+float BNO080::getUncalibratedGyroX()
+{
+	float gyro = qToFloat(rawUncalibGyroX, gyro_Q1);
+	return (gyro);
+}
+//Return the gyro component
+float BNO080::getUncalibratedGyroY()
+{
+	float gyro = qToFloat(rawUncalibGyroY, gyro_Q1);
+	return (gyro);
+}
+//Return the gyro component
+float BNO080::getUncalibratedGyroZ()
+{
+	float gyro = qToFloat(rawUncalibGyroZ, gyro_Q1);
+	return (gyro);
+}
+//Return the gyro component
+float BNO080::getUncalibratedGyroBiasX()
+{
+	float gyro = qToFloat(rawBiasX, gyro_Q1);
+	return (gyro);
+}
+//Return the gyro component
+float BNO080::getUncalibratedGyroBiasY()
+{
+	float gyro = qToFloat(rawBiasY, gyro_Q1);
+	return (gyro);
+}
+//Return the gyro component
+float BNO080::getUncalibratedGyroBiasZ()
+{
+	float gyro = qToFloat(rawBiasZ, gyro_Q1);
+	return (gyro);
+}
+
+//Return the gyro component
+uint8_t BNO080::getUncalibratedGyroAccuracy()
+{
+	return (UncalibGyroAccuracy);
 }
 
 //Gets the full gravity vector
@@ -1113,6 +1184,7 @@ uint8_t BNO080::resetReason()
 //See https://en.wikipedia.org/wiki/Q_(number_format)
 float BNO080::qToFloat(int16_t fixedPointValue, uint8_t qPoint)
 {
+
 	float qFloat = fixedPointValue;
 	qFloat *= pow(2, qPoint * -1);
 	return (qFloat);
@@ -1164,6 +1236,12 @@ void BNO080::enableGravity(uint16_t timeBetweenReports)
 void BNO080::enableGyro(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_GYROSCOPE, timeBetweenReports);
+}
+
+//Sends the packet to enable the uncalibrated gyro
+void BNO080::enableUncalibratedGyro(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_UNCALIBRATED_GYRO, timeBetweenReports);
 }
 
 //Sends the packet to enable the magnetometer
