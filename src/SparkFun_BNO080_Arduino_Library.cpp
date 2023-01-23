@@ -417,6 +417,13 @@ uint16_t BNO080::parseInputReport(void)
 			calibrationStatus = shtpData[5 + 5]; //R0 - Status (0 = success, non-zero = fail)
 		}
 	}
+	else if(shtpData[5] == SENSOR_REPORTID_GRAVITY)
+	{
+		gravityAccuracy = status;
+		gravityX = data1;
+		gravityY = data2;
+		gravityZ = data3;
+	}
 	else
 	{
 		//This sensor report ID is unhandled.
@@ -761,6 +768,40 @@ uint8_t BNO080::getUncalibratedGyroAccuracy()
 	return (UncalibGyroAccuracy);
 }
 
+//Gets the full gravity vector
+//x,y,z output floats
+void BNO080::getGravity(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(gravityX, gravity_Q1);
+	y = qToFloat(gravityX, gravity_Q1);
+	z = qToFloat(gravityX, gravity_Q1);
+	accuracy = gravityAccuracy;
+}
+
+float BNO080::getGravityX()
+{
+	float x = qToFloat(gravityX, gravity_Q1);
+	return x;
+}
+
+//Return the gravity component
+float BNO080::getGravityY()
+{
+	float y = qToFloat(gravityY, gravity_Q1);
+	return y;
+}
+
+//Return the gravity component
+float BNO080::getGravityZ()
+{
+	float z = qToFloat(gravityZ, gravity_Q1);
+	return z;
+}
+
+uint8_t BNO080::getGravityAccuracy()
+{
+	return (gravityAccuracy);
+}
 
 //Gets the full mag vector
 //x,y,z output floats
@@ -1185,6 +1226,12 @@ void BNO080::enableLinearAccelerometer(uint16_t timeBetweenReports)
 	setFeatureCommand(SENSOR_REPORTID_LINEAR_ACCELERATION, timeBetweenReports);
 }
 
+//Sends the packet to enable the gravity vector
+void BNO080::enableGravity(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_GRAVITY, timeBetweenReports);
+}
+
 //Sends the packet to enable the gyro
 void BNO080::enableGyro(uint16_t timeBetweenReports)
 {
@@ -1300,6 +1347,21 @@ boolean BNO080::calibrationComplete()
 	return (false);
 }
 
+void BNO080::tareNow(bool zAxis, uint8_t rotationVectorBasis)
+{
+	sendTareCommand(TARE_NOW, zAxis ? TARE_AXIS_Z : TARE_AXIS_ALL, rotationVectorBasis);
+}
+
+void BNO080::saveTare()
+{
+	sendTareCommand(TARE_PERSIST);
+}
+
+void BNO080::clearTare()
+{
+	sendTareCommand(TARE_SET_REORIENTATION);
+}
+
 //Given a sensor's report ID, this tells the BNO080 to begin reporting the values
 void BNO080::setFeatureCommand(uint8_t reportID, uint16_t timeBetweenReports)
 {
@@ -1397,6 +1459,23 @@ void BNO080::sendCalibrateCommand(uint8_t thingToCalibrate)
 
 	//Using this shtpData packet, send a command
 	sendCommand(COMMAND_ME_CALIBRATE);
+}
+
+void BNO080::sendTareCommand(uint8_t command, uint8_t axis, uint8_t rotationVectorBasis)
+{
+	for (uint8_t x = 3; x < 12; x++) //Clear this section of the shtpData array
+		shtpData[x] = 0;
+
+	shtpData[3] = command;
+	
+	if (command == TARE_NOW)
+	{
+		shtpData[4] = axis; // axis setting
+		shtpData[5] = rotationVectorBasis; // rotation vector
+	}
+	
+	//Using this shtpData packet, send a command
+	sendCommand(COMMAND_TARE);
 }
 
 //Request ME Calibration Status from BNO080
