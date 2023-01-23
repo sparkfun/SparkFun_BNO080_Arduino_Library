@@ -403,6 +403,7 @@ uint16_t BNO080::parseInputReport(void)
 	}
 	else if(shtpData[5] == SENSOR_REPORTID_GRAVITY)
 	{
+		gravityAccuracy = status;
 		gravityX = data1;
 		gravityY = data2;
 		gravityZ = data3;
@@ -669,27 +670,6 @@ void BNO080::getGyro(float &x, float &y, float &z, uint8_t &accuracy)
 	accuracy = gyroAccuracy;
 }
 
-//Return the gravity component
-float BNO080::getGravityX()
-{
-	float x = qToFloat(gravityX, gravity_Q1);
-	return x;
-}
-
-//Return the gravity component
-float BNO080::getGravityY()
-{
-	float y = qToFloat(gravityY, gravity_Q1);
-	return y;
-}
-
-//Return the gravity component
-float BNO080::getGravityZ()
-{
-	float z = qToFloat(gravityZ, gravity_Q1);
-	return z;
-}
-
 //Return the gyro component
 float BNO080::getGyroX()
 {
@@ -715,6 +695,41 @@ float BNO080::getGyroZ()
 uint8_t BNO080::getGyroAccuracy()
 {
 	return (gyroAccuracy);
+}
+
+//Gets the full gravity vector
+//x,y,z output floats
+void BNO080::getGravity(float &x, float &y, float &z, uint8_t &accuracy)
+{
+	x = qToFloat(gravityX, gravity_Q1);
+	y = qToFloat(gravityX, gravity_Q1);
+	z = qToFloat(gravityX, gravity_Q1);
+	accuracy = gravityAccuracy;
+}
+
+float BNO080::getGravityX()
+{
+	float x = qToFloat(gravityX, gravity_Q1);
+	return x;
+}
+
+//Return the gravity component
+float BNO080::getGravityY()
+{
+	float y = qToFloat(gravityY, gravity_Q1);
+	return y;
+}
+
+//Return the gravity component
+float BNO080::getGravityZ()
+{
+	float z = qToFloat(gravityZ, gravity_Q1);
+	return z;
+}
+
+uint8_t BNO080::getGravityAccuracy()
+{
+	return (gravityAccuracy);
 }
 
 //Gets the full mag vector

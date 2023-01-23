@@ -64,6 +64,7 @@ void loop() {
     float gravityX = myIMU.getGravityX();
     float gravityY = myIMU.getGravityY();
     float gravityZ = myIMU.getGravityZ();
+    float gravityAccuracy = myIMU.getGravityAccuracy();
 
     Serial.print(gravityX, 2);
     Serial.print(F(","));
@@ -71,6 +72,9 @@ void loop() {
     Serial.print(F(","));
     Serial.print(gravityZ, 2);
     Serial.print(F(","));
+    Serial.print(gravityAccuracy, 2);
+    Serial.print(F(","));
+    
 
     Serial.println();
   }

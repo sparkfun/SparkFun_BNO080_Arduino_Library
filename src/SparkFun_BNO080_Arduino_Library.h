@@ -209,9 +209,11 @@ public:
 	float getMagZ();
 	uint8_t getMagAccuracy();
 
+	void getGravity(float &x, float &y, float &z, uint8_t &accuracy);
 	float getGravityX();
 	float getGravityY();
 	float getGravityZ();
+	uint8_t getGravityAccuracy();
 
 	void calibrateAccelerometer();
 	void calibrateGyro();
@@ -291,7 +293,7 @@ private:
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
 	uint16_t rawFastGyroX, rawFastGyroY, rawFastGyroZ;
-	uint16_t gravityX, gravityY, gravityZ;
+	uint16_t gravityX, gravityY, gravityZ, gravityAccuracy;
 	uint8_t tapDetector;
 	uint16_t stepCount;
 	uint32_t timeStamp;
