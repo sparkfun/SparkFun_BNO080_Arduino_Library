@@ -138,6 +138,7 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
 	if (receivePacket() == true)
 	{
 		if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
+		{
 			if (_printDebug == true)
 			{
 				_debugPort->print(F("SW Version Major: 0x"));
@@ -155,6 +156,7 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
 				_debugPort->println(SW_Version_Patch, HEX);
 			}
 			return (true);
+		}
 	}
 
 	return (false); //Something went wrong
@@ -476,7 +478,7 @@ float BNO080::getPitch()
 	dqy = dqy/norm;
 	dqz = dqz/norm;
 
-	float ysqr = dqy * dqy;
+	//float ysqr = dqy * dqy;
 
 	// pitch (y-axis rotation)
 	float t2 = +2.0 * (dqw * dqy - dqz * dqx);
@@ -1452,7 +1454,9 @@ void BNO080::sendCalibrateCommand(uint8_t thingToCalibrate)
 		shtpData[5] = 1;
 	}
 	else if (thingToCalibrate == CALIBRATE_STOP)
+	{
 		; //Do nothing, bytes are set to zero
+	}
 
 	//Make the internal calStatus variable non-zero (operation failed) so that user can test while we wait
 	calibrationStatus = 1;
