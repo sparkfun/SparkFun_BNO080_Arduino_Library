@@ -155,6 +155,7 @@ public:
 	void enableARVRStabilizedGameRotationVector(uint16_t timeBetweenReports);
 	void enableAccelerometer(uint16_t timeBetweenReports);
 	void enableLinearAccelerometer(uint16_t timeBetweenReports);
+	void enableGravity(uint16_t timeBetweenReports);
 	void enableGyro(uint16_t timeBetweenReports);
 	void enableMagnetometer(uint16_t timeBetweenReports);
 	void enableTapDetector(uint16_t timeBetweenReports);
@@ -207,6 +208,10 @@ public:
 	float getMagY();
 	float getMagZ();
 	uint8_t getMagAccuracy();
+
+	float getGravityX();
+	float getGravityY();
+	float getGravityZ();
 
 	void calibrateAccelerometer();
 	void calibrateGyro();
@@ -286,6 +291,7 @@ private:
 	uint16_t rawMagX, rawMagY, rawMagZ, magAccuracy;
 	uint16_t rawQuatI, rawQuatJ, rawQuatK, rawQuatReal, rawQuatRadianAccuracy, quatAccuracy;
 	uint16_t rawFastGyroX, rawFastGyroY, rawFastGyroZ;
+	uint16_t gravityX, gravityY, gravityZ;
 	uint8_t tapDetector;
 	uint16_t stepCount;
 	uint32_t timeStamp;
@@ -306,4 +312,5 @@ private:
 	int16_t gyro_Q1 = 9;
 	int16_t magnetometer_Q1 = 4;
 	int16_t angular_velocity_Q1 = 10;
+	int16_t gravity_Q1 = 8;
 };

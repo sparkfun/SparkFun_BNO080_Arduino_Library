@@ -401,6 +401,12 @@ uint16_t BNO080::parseInputReport(void)
 			calibrationStatus = shtpData[5 + 5]; //R0 - Status (0 = success, non-zero = fail)
 		}
 	}
+	else if(shtpData[5] == SENSOR_REPORTID_GRAVITY)
+	{
+		gravityX = data1;
+		gravityY = data2;
+		gravityZ = data3;
+	}
 	else
 	{
 		//This sensor report ID is unhandled.
@@ -661,6 +667,27 @@ void BNO080::getGyro(float &x, float &y, float &z, uint8_t &accuracy)
 	y = qToFloat(rawGyroY, gyro_Q1);
 	z = qToFloat(rawGyroZ, gyro_Q1);
 	accuracy = gyroAccuracy;
+}
+
+//Return the gravity component
+float BNO080::getGravityX()
+{
+	float x = qToFloat(gravityX, gravity_Q1);
+	return x;
+}
+
+//Return the gravity component
+float BNO080::getGravityY()
+{
+	float y = qToFloat(gravityY, gravity_Q1);
+	return y;
+}
+
+//Return the gravity component
+float BNO080::getGravityZ()
+{
+	float z = qToFloat(gravityZ, gravity_Q1);
+	return z;
 }
 
 //Return the gyro component
@@ -1110,6 +1137,12 @@ void BNO080::enableAccelerometer(uint16_t timeBetweenReports)
 void BNO080::enableLinearAccelerometer(uint16_t timeBetweenReports)
 {
 	setFeatureCommand(SENSOR_REPORTID_LINEAR_ACCELERATION, timeBetweenReports);
+}
+
+//Sends the packet to enable the gravity vector
+void BNO080::enableGravity(uint16_t timeBetweenReports)
+{
+	setFeatureCommand(SENSOR_REPORTID_GRAVITY, timeBetweenReports);
 }
 
 //Sends the packet to enable the gyro
