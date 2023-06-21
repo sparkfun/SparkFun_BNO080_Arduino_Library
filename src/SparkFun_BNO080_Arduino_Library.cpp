@@ -51,31 +51,42 @@ boolean BNO080::begin(uint8_t deviceAddress, TwoWire &wirePort, uint8_t intPin)
 	sendPacket(CHANNEL_CONTROL, 2);
 
 	//Now we wait for response
-	if (receivePacket() == true)
+	//Retry up to five times just in case other data is already waiting in the buffer (BNO086 needs this)
+	bool productIdSeen = false;
+	uint8_t retry = 0;
+	while ((!productIdSeen) && (retry < 5))
 	{
-		if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
+		if (receivePacket() == true)
 		{
-			if (_printDebug == true)
+			if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
 			{
-				_debugPort->print(F("SW Version Major: 0x"));
-				_debugPort->print(shtpData[2], HEX);
-				_debugPort->print(F(" SW Version Minor: 0x"));
-				_debugPort->print(shtpData[3], HEX);
-				uint32_t SW_Part_Number = ((uint32_t)shtpData[7] << 24) | ((uint32_t)shtpData[6] << 16) | ((uint32_t)shtpData[5] << 8) | ((uint32_t)shtpData[4]);
-				_debugPort->print(F(" SW Part Number: 0x"));
-				_debugPort->print(SW_Part_Number, HEX);
-				uint32_t SW_Build_Number = ((uint32_t)shtpData[11] << 24) | ((uint32_t)shtpData[10] << 16) | ((uint32_t)shtpData[9] << 8) | ((uint32_t)shtpData[8]);
-				_debugPort->print(F(" SW Build Number: 0x"));
-				_debugPort->print(SW_Build_Number, HEX);
-				uint16_t SW_Version_Patch = ((uint16_t)shtpData[13] << 8) | ((uint16_t)shtpData[12]);
-				_debugPort->print(F(" SW Version Patch: 0x"));
-				_debugPort->println(SW_Version_Patch, HEX);
+				if (_printDebug == true)
+				{
+					_debugPort->print(F("SW Version Major: 0x"));
+					_debugPort->print(shtpData[2], HEX);
+					_debugPort->print(F(" SW Version Minor: 0x"));
+					_debugPort->print(shtpData[3], HEX);
+					uint32_t SW_Part_Number = ((uint32_t)shtpData[7] << 24) | ((uint32_t)shtpData[6] << 16) | ((uint32_t)shtpData[5] << 8) | ((uint32_t)shtpData[4]);
+					_debugPort->print(F(" SW Part Number: 0x"));
+					_debugPort->print(SW_Part_Number, HEX);
+					uint32_t SW_Build_Number = ((uint32_t)shtpData[11] << 24) | ((uint32_t)shtpData[10] << 16) | ((uint32_t)shtpData[9] << 8) | ((uint32_t)shtpData[8]);
+					_debugPort->print(F(" SW Build Number: 0x"));
+					_debugPort->print(SW_Build_Number, HEX);
+					uint16_t SW_Version_Patch = ((uint16_t)shtpData[13] << 8) | ((uint16_t)shtpData[12]);
+					_debugPort->print(F(" SW Version Patch: 0x"));
+					_debugPort->println(SW_Version_Patch, HEX);
+				}
+				productIdSeen = true;
 			}
-			return (true);
 		}
-	}
+		else
+		{
+			delay(100);
+		}
 
-	return (false); //Something went wrong
+		retry++;
+	}
+	return (productIdSeen);
 }
 
 boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_INTPin, uint8_t user_RSTPin, uint32_t spiPortSpeed, SPIClass &spiPort)
@@ -134,32 +145,43 @@ boolean BNO080::beginSPI(uint8_t user_CSPin, uint8_t user_WAKPin, uint8_t user_I
 	sendPacket(CHANNEL_CONTROL, 2);
 
 	//Now we wait for response
-	waitForSPI();
-	if (receivePacket() == true)
+	//Retry up to five times just in case other data is already waiting in the buffer (BNO086 needs this)
+	bool productIdSeen = false;
+	uint8_t retry = 0;
+	while ((!productIdSeen) && (retry < 5))
 	{
-		if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
+		waitForSPI();
+		if (receivePacket() == true)
 		{
-			if (_printDebug == true)
+			if (shtpData[0] == SHTP_REPORT_PRODUCT_ID_RESPONSE)
 			{
-				_debugPort->print(F("SW Version Major: 0x"));
-				_debugPort->print(shtpData[2], HEX);
-				_debugPort->print(F(" SW Version Minor: 0x"));
-				_debugPort->print(shtpData[3], HEX);
-				uint32_t SW_Part_Number = ((uint32_t)shtpData[7] << 24) | ((uint32_t)shtpData[6] << 16) | ((uint32_t)shtpData[5] << 8) | ((uint32_t)shtpData[4]);
-				_debugPort->print(F(" SW Part Number: 0x"));
-				_debugPort->print(SW_Part_Number, HEX);
-				uint32_t SW_Build_Number = ((uint32_t)shtpData[11] << 24) | ((uint32_t)shtpData[10] << 16) | ((uint32_t)shtpData[9] << 8) | ((uint32_t)shtpData[8]);
-				_debugPort->print(F(" SW Build Number: 0x"));
-				_debugPort->print(SW_Build_Number, HEX);
-				uint16_t SW_Version_Patch = ((uint16_t)shtpData[13] << 8) | ((uint16_t)shtpData[12]);
-				_debugPort->print(F(" SW Version Patch: 0x"));
-				_debugPort->println(SW_Version_Patch, HEX);
+				if (_printDebug == true)
+				{
+					_debugPort->print(F("SW Version Major: 0x"));
+					_debugPort->print(shtpData[2], HEX);
+					_debugPort->print(F(" SW Version Minor: 0x"));
+					_debugPort->print(shtpData[3], HEX);
+					uint32_t SW_Part_Number = ((uint32_t)shtpData[7] << 24) | ((uint32_t)shtpData[6] << 16) | ((uint32_t)shtpData[5] << 8) | ((uint32_t)shtpData[4]);
+					_debugPort->print(F(" SW Part Number: 0x"));
+					_debugPort->print(SW_Part_Number, HEX);
+					uint32_t SW_Build_Number = ((uint32_t)shtpData[11] << 24) | ((uint32_t)shtpData[10] << 16) | ((uint32_t)shtpData[9] << 8) | ((uint32_t)shtpData[8]);
+					_debugPort->print(F(" SW Build Number: 0x"));
+					_debugPort->print(SW_Build_Number, HEX);
+					uint16_t SW_Version_Patch = ((uint16_t)shtpData[13] << 8) | ((uint16_t)shtpData[12]);
+					_debugPort->print(F(" SW Version Patch: 0x"));
+					_debugPort->println(SW_Version_Patch, HEX);
+				}
+				productIdSeen = true;
 			}
-			return (true);
 		}
-	}
+		else
+		{
+			delay(100);
+		}
 
-	return (false); //Something went wrong
+		retry++;
+	}
+	return (productIdSeen);
 }
 
 //Calling this function with nothing sets the debug port to Serial
