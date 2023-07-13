@@ -45,7 +45,7 @@
 //I2C_BUFFER_LENGTH is defined in Wire.H
 #define I2C_BUFFER_LENGTH BUFFER_LENGTH
 
-#else
+#elif (!defined(ARDUINO_UNOR4_WIFI) || !defined(ARDUINO_UNOR4_MINIMA))
 
 //The catch-all default is 32
 #define I2C_BUFFER_LENGTH 32
